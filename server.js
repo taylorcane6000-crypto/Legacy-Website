@@ -445,8 +445,9 @@ if (process.env.BOT_TOKEN) {
     });
     bot.once(Events.ClientReady, (client) => {
         const storeUrl = String(DOMAIN).replace(/\/$/, '');
-        client.user.setActivity(storeUrl, { type: ActivityType.Watching });
-        console.log('[Discord] Bot ready — presence (website):', storeUrl);
+        const presenceLabel = storeUrl.replace(/^https?:\/\//i, '');
+        client.user.setActivity(presenceLabel, { type: ActivityType.Watching });
+        console.log('[Discord] Bot ready — presence (website):', presenceLabel);
         console.log('[Discord] GUILD_ID(s) — primary:', GUILD_ID, '| addcred allowed:', GUILD_IDS.join(', '));
         if (STORE_GUILD_ID_OVERRIDE) {
             console.log('[Discord] STORE_GUILD_ID (role delivery first):', STORE_GUILD_ID_OVERRIDE);
@@ -483,13 +484,12 @@ const PRODUCTS = {
     
     'queue_skip': { name: 'Queue Skip (One Time)', price: 299, images: ['https://cdn.tip4serv.com/shops-img/98758859c7895f3e68fd1aa7c08a7af53655.webp'] },
     'vip': { name: 'VIP', price: 499, images: [VIP_LEGACY_CARD_IMG] },
-    'vip_standard': { name: 'VIP Status', price: 499, images: ['https://cdn.tip4serv.com/shops-img/98758859c7895f3e68fd1aa7c08a7af53655.webp'] },
     'vip_builder': { name: 'VIP Builder', price: 699, images: [] },
     'vip_components': { name: 'VIP - Comps', price: 699, images: [] },
     'vip_starter': { name: 'VIP Starter', price: 599, images: [] },
     'vip_turret': { name: 'VIP Turret', price: 599, images: [] },
     'vip_medical': { name: 'VIP Medical', price: 499, images: ['https://cdn.tip4serv.com/shops-img/9875b13835645312b32ea3c7c4916d9cd0c9.webp'] },
-    'vip_deluxe': { name: 'VIP Deluxe', price: 2499, images: [] },
+    'vip_deluxe': { name: 'VIP Bundle', price: 2499, images: [] },
     
     
     'rank_doomsday': { name: 'Doomsday Rank', price: 8499, images: [] },
@@ -575,7 +575,12 @@ function normalizeStoreCreditForCheckout(subtotalPence, requestedCreditPence, ba
 }
 
 async function deliverStorePurchase(order, user, cartItems) {
-    const rconCommands = rconHelper.getCommandsForItems(cartItems, user.gamertag);
+    const safeUser = user || {};
+    const safeGamertag = String(safeUser.gamertag || '').trim() || 'unknown';
+    const safeDiscordId = String(safeUser.discord_id || order?.discord_id || '').trim();
+    const safeUsername = String(safeUser.username || safeUser.gamertag || 'Unknown');
+
+    const rconCommands = rconHelper.getCommandsForItems(cartItems, safeGamertag);
     if (rconCommands.length > 0) {
         await rconHelper.executeCommands(rconCommands);
     }
@@ -584,8 +589,8 @@ async function deliverStorePurchase(order, user, cartItems) {
         const guild = await fetchGuildForRoleDelivery();
         let member = null;
 
-        if (guild) {
-            member = await guild.members.fetch(user.discord_id).catch((e) => console.error('[Discord] Member Fetch Error:', e));
+        if (guild && safeDiscordId) {
+            member = await guild.members.fetch(safeDiscordId).catch((e) => console.error('[Discord] Member Fetch Error:', e));
 
             if (member) {
                 for (const item of cartItems) {
@@ -593,7 +598,7 @@ async function deliverStorePurchase(order, user, cartItems) {
                     if (roleId) {
                         try {
                             await member.roles.add(roleId);
-                            console.log(`[Discord] Assigned role ${roleId} to ${user.username}`);
+                            console.log(`[Discord] Assigned role ${roleId} to ${safeUsername}`);
                         } catch (err) {
                             console.error(`[Discord] Failed to assign role ${roleId}:`, err.message);
                         }
@@ -623,8 +628,12 @@ async function deliverStorePurchase(order, user, cartItems) {
                 .setTitle('🛒 New Purchase')
                 .setColor('#8b5cf6')
                 .addFields(
-                    { name: 'User', value: `${user.gamertag} (<@${user.discord_id}>)`, inline: true },
-                    { name: 'Email', value: user.email || 'N/A', inline: true },
+                    {
+                        name: 'User',
+                        value: safeDiscordId ? `${safeGamertag} (<@${safeDiscordId}>)` : safeGamertag,
+                        inline: true
+                    },
+                    { name: 'Email', value: safeUser.email || 'N/A', inline: true },
                     { name: 'Amount', value: amountVal, inline: false },
                     { name: 'Items Purchased', value: itemsList || 'No items?' }
                 )
@@ -679,6 +688,7 @@ async function deliverSubscriptionItems(user, productId) {
 /** Kits page includes all rank and VIP products. */
 function isKitsPageProductById(productId) {
     const id = String(productId || '');
+    if (id === 'vip_standard') return false;
     return id.startsWith('vip_') || id.startsWith('rank_');
 }
 
@@ -1585,8 +1595,8 @@ app.post('/create-checkout-session', checkAuth, async (req, res) => {
             }
             try {
                 const order = await db.getOrder(orderId);
-                const user = await db.getUser(req.user.discord_id);
-                const cartItemsParsed = JSON.parse(order.items);
+                const user = (await db.getUser(req.user.discord_id)) || req.user || null;
+                const cartItemsParsed = order && order.items ? JSON.parse(order.items) : cartItems;
                 await deliverStorePurchase(order, user, cartItemsParsed);
                 await db.completeOrder(orderId);
             } catch (fulfillErr) {
@@ -1597,7 +1607,11 @@ app.post('/create-checkout-session', checkAuth, async (req, res) => {
                     console.error('[Checkout] Credit revert failed:', revertErr.message);
                 }
                 await db.deletePendingOrder(orderId);
-                return res.status(500).json({ error: 'Order could not be completed. Your balance was restored if possible — contact staff.' });
+                return res.status(500).json({
+                    error:
+                        'Order could not be completed. Your balance was restored if possible — contact staff. ' +
+                        String(fulfillErr && fulfillErr.message ? fulfillErr.message : '').slice(0, 160)
+                });
             }
             return res.json({ url: `${DOMAIN}/after_sales.html?paid=credit` });
         }
