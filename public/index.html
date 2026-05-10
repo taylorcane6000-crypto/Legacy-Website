@@ -34,6 +34,12 @@
                 <a href="/gamble" class="legacy-btn text-decoration-none inline-flex items-center justify-center gap-1 flex-1 sm:flex-none min-h-[44px]"><i class="fa-solid fa-dice text-violet-400"></i>Casino</a>
                 <button type="button" class="legacy-btn legacy-btn-primary flex-1 sm:flex-none min-h-[44px] justify-center sm:min-w-[8rem]" onclick="Cart.open()"><i class="fa-solid fa-cart-shopping mr-1"></i>Cart <span id="cart-badge" class="legacy-pill hidden">0</span></button>
             </div>
+            <div class="flex flex-wrap gap-2 items-stretch sm:items-center mt-2 touch-manipulation">
+                <a href="#essentials" class="legacy-btn text-decoration-none inline-flex items-center justify-center gap-1 flex-1 sm:flex-none min-h-[40px]"><i class="fa-solid fa-bolt text-violet-400"></i>Essentials</a>
+                <a href="#ranks" class="legacy-btn text-decoration-none inline-flex items-center justify-center gap-1 flex-1 sm:flex-none min-h-[40px]"><i class="fa-solid fa-crown text-violet-400"></i>Ranks</a>
+                <a href="#packs" class="legacy-btn text-decoration-none inline-flex items-center justify-center gap-1 flex-1 sm:flex-none min-h-[40px]"><i class="fa-solid fa-box text-violet-400"></i>Packs</a>
+                <a href="#vip" class="legacy-btn text-decoration-none inline-flex items-center justify-center gap-1 flex-1 sm:flex-none min-h-[40px]"><i class="fa-solid fa-star text-violet-400"></i>VIP</a>
+            </div>
         </section>
 
         <section class="mb-10 legacy-card p-6 sm:p-8 border border-white/10">
@@ -45,7 +51,7 @@
                 </p>
             </div>
 
-            <div class="mb-8">
+            <div id="essentials" class="mb-8">
                 <h3 class="font-display text-lg uppercase tracking-widest text-violet-300 mb-4">Essentials</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <article class="legacy-card p-5 border border-violet-500/25 flex flex-col">
@@ -82,7 +88,7 @@
                 </div>
             </div>
 
-            <div class="mb-8">
+            <div id="ranks" class="mb-8">
                 <h3 class="font-display text-lg uppercase tracking-widest text-violet-300 mb-3">Ranks</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <article class="legacy-card p-5 border border-white/15 flex flex-col">
@@ -165,12 +171,12 @@
                 </div>
             </div>
 
-            <div class="mb-8">
+            <div id="packs" class="mb-8">
                 <h3 class="font-display text-lg uppercase tracking-widest text-violet-300 mb-3">Packs</h3>
                 <p class="text-gray-500 text-sm border border-white/10 rounded-lg p-4">No products in this section right now.</p>
             </div>
 
-            <div>
+            <div id="vip">
                 <h3 class="font-display text-lg uppercase tracking-widest text-violet-300 mb-3">VIP</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <article class="legacy-card p-5 border border-white/15 flex flex-col">
