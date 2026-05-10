@@ -1,0 +1,2412 @@
+{
+  "items": [
+    {
+      "id": "ak47",
+      "name": "Assault Rifle",
+      "shortname": "rifle.ak",
+      "category": "Weapons",
+      "price": 20,
+      "quantity": 1
+    },
+    {
+      "id": "mp5",
+      "name": "MP5A4",
+      "shortname": "smg.mp5",
+      "category": "Weapons",
+      "price": 15,
+      "quantity": 1
+    },
+    {
+      "id": "lr300",
+      "name": "LR-300",
+      "shortname": "rifle.lr300",
+      "category": "Weapons",
+      "price": 18,
+      "quantity": 1
+    },
+    {
+      "id": "sar",
+      "name": "Semi-Auto Rifle",
+      "shortname": "rifle.semiauto",
+      "category": "Weapons",
+      "price": 8,
+      "quantity": 1
+    },
+    {
+      "id": "thompson",
+      "name": "Thompson",
+      "shortname": "smg.thompson",
+      "category": "Weapons",
+      "price": 10,
+      "quantity": 1
+    },
+    {
+      "id": "custom_smg",
+      "name": "Custom SMG",
+      "shortname": "smg.2",
+      "category": "Weapons",
+      "price": 8,
+      "quantity": 1
+    },
+    {
+      "id": "pump_shotgun",
+      "name": "Pump Shotgun",
+      "shortname": "shotgun.pump",
+      "category": "Weapons",
+      "price": 10,
+      "quantity": 1
+    },
+    {
+      "id": "bolt",
+      "name": "Bolt Action Rifle",
+      "shortname": "rifle.bolt",
+      "category": "Weapons",
+      "price": 15,
+      "quantity": 1
+    },
+    {
+      "id": "m249",
+      "name": "M249",
+      "shortname": "lmg.m249",
+      "category": "Weapons",
+      "price": 100,
+      "quantity": 1
+    },
+    {
+      "id": "l96",
+      "name": "L96",
+      "shortname": "rifle.l96",
+      "category": "Weapons",
+      "price": 25,
+      "quantity": 1
+    },
+    {
+      "id": "hmlmg",
+      "name": "HMLMG",
+      "shortname": "lmg.hmlmg",
+      "category": "Weapons",
+      "price": 25,
+      "quantity": 1
+    },
+    {
+      "id": "m92",
+      "name": "M92 Pistol",
+      "shortname": "pistol.m92",
+      "category": "Weapons",
+      "price": 5,
+      "quantity": 1
+    },
+    {
+      "id": "python",
+      "name": "Python Revolver",
+      "shortname": "pistol.python",
+      "category": "Weapons",
+      "price": 6,
+      "quantity": 1
+    },
+    {
+      "id": "556_ammo",
+      "name": "5.56 Rifle Ammo",
+      "shortname": "ammo.rifle",
+      "category": "Ammunition",
+      "price": 2,
+      "quantity": 128
+    },
+    {
+      "id": "pistol_ammo",
+      "name": "Pistol Ammo",
+      "shortname": "ammo.pistol",
+      "category": "Ammunition",
+      "price": 2,
+      "quantity": 128
+    },
+    {
+      "id": "12gauge",
+      "name": "12 Gauge Buckshot",
+      "shortname": "ammo.shotgun",
+      "category": "Ammunition",
+      "price": 2,
+      "quantity": 32
+    },
+    {
+      "id": "556_incendiary",
+      "name": "Incendiary 5.56 Ammo",
+      "shortname": "ammo.rifle.incendiary",
+      "category": "Ammunition",
+      "price": 4,
+      "quantity": 32
+    },
+    {
+      "id": "12gauge_slug",
+      "name": "12 Gauge Slug",
+      "shortname": "ammo.shotgun.slug",
+      "category": "Ammunition",
+      "price": 3,
+      "quantity": 32
+    },
+    {
+      "id": "metal_frags",
+      "name": "Metal Fragments",
+      "shortname": "metal.fragments",
+      "category": "Resources",
+      "price": 5,
+      "quantity": 1250
+    },
+    {
+      "id": "wood",
+      "name": "Wood",
+      "shortname": "wood",
+      "category": "Resources",
+      "price": 2,
+      "quantity": 2500
+    },
+    {
+      "id": "hqm",
+      "name": "High Quality Metal",
+      "shortname": "metal.refined",
+      "category": "Resources",
+      "price": 5,
+      "quantity": 25
+    },
+    {
+      "id": "metal_facemask",
+      "name": "Metal Facemask",
+      "shortname": "metal.facemask",
+      "category": "Attire",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "metal_chestplate",
+      "name": "Metal Chest Plate",
+      "shortname": "metal.plate.torso",
+      "category": "Attire",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "hoodie",
+      "name": "Hoodie",
+      "shortname": "hoodie",
+      "category": "Attire",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "tactical_gloves",
+      "name": "Tactical Gloves",
+      "shortname": "tactical.gloves",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "roadsign_kilt",
+      "name": "Roadsign Kilt",
+      "shortname": "roadsign.kilt",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "pants",
+      "name": "Pants",
+      "shortname": "pants",
+      "category": "Attire",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "hazmat",
+      "name": "Hazmat Suit",
+      "shortname": "hazmatsuit",
+      "category": "Attire",
+      "price": 4,
+      "quantity": 1
+    },
+    {
+      "id": "boots",
+      "name": "Boots",
+      "shortname": "shoes.boots",
+      "category": "Attire",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "large_medkit",
+      "name": "Large Medkit",
+      "shortname": "largemedkit",
+      "category": "Medical",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "syringe",
+      "name": "Medical Syringe",
+      "shortname": "syringe.medical",
+      "category": "Medical",
+      "price": 2,
+      "quantity": 5
+    },
+    {
+      "id": "bandage",
+      "name": "Bandage",
+      "shortname": "bandage",
+      "category": "Medical",
+      "price": 1,
+      "quantity": 5
+    },
+    {
+      "id": "gears",
+      "name": "Gears",
+      "shortname": "gears",
+      "category": "Components",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "metalpipe",
+      "name": "Metal Pipe",
+      "shortname": "metalpipe",
+      "category": "Components",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "metalblade",
+      "name": "Metal Blade",
+      "shortname": "metalblade",
+      "category": "Components",
+      "price": 1,
+      "quantity": 5
+    },
+    {
+      "id": "propanetank",
+      "name": "Propane Tank",
+      "shortname": "propanetank",
+      "category": "Components",
+      "price": 1,
+      "quantity": 10
+    },
+    {
+      "id": "roadsigns",
+      "name": "Road Signs",
+      "shortname": "roadsigns",
+      "category": "Components",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "rope",
+      "name": "Rope",
+      "shortname": "rope",
+      "category": "Components",
+      "price": 1,
+      "quantity": 100
+    },
+    {
+      "id": "sewingkit",
+      "name": "Sewing Kit",
+      "shortname": "sewingkit",
+      "category": "Components",
+      "price": 1,
+      "quantity": 15
+    },
+    {
+      "id": "sheetmetal",
+      "name": "Sheet Metal",
+      "shortname": "sheetmetal",
+      "category": "Components",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "metalspring",
+      "name": "Metal Spring",
+      "shortname": "metalspring",
+      "category": "Components",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "tarp",
+      "name": "Tarp",
+      "shortname": "tarp",
+      "category": "Components",
+      "price": 1,
+      "quantity": 30
+    },
+    {
+      "id": "techparts",
+      "name": "Tech Trash",
+      "shortname": "techparts",
+      "category": "Components",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "riflebody",
+      "name": "Rifle Body",
+      "shortname": "riflebody",
+      "category": "Components",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "semibody",
+      "name": "Semi Body",
+      "shortname": "semibody",
+      "category": "Components",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "smgbody",
+      "name": "SMG Body",
+      "shortname": "smgbody",
+      "category": "Components",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "fuse",
+      "name": "Fuse",
+      "shortname": "fuse",
+      "category": "Components",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "cupboard",
+      "name": "Tool Cupboard",
+      "shortname": "cupboard.tool",
+      "category": "Construction",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "codelock",
+      "name": "Code Lock",
+      "shortname": "lock.code",
+      "category": "Construction",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "high_wood_wall",
+      "name": "High External Wood Wall",
+      "shortname": "wall.external.high",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 10
+    },
+    {
+      "id": "high_wood_gate",
+      "name": "High External Wood Gate",
+      "shortname": "gates.external.high.wood",
+      "category": "Construction",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "high_stone_wall",
+      "name": "High External Stone Wall",
+      "shortname": "wall.external.high.stone",
+      "category": "Construction",
+      "price": 4,
+      "quantity": 10
+    },
+    {
+      "id": "high_stone_gate",
+      "name": "High External Stone Gate",
+      "shortname": "gates.external.high.stone",
+      "category": "Construction",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "double_metal_door",
+      "name": "Double Sheet Metal Door",
+      "shortname": "door.double.hinged.metal",
+      "category": "Construction",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "double_armored_door",
+      "name": "Double Armored Door",
+      "shortname": "door.double.hinged.toptier",
+      "category": "Construction",
+      "price": 8,
+      "quantity": 1
+    },
+    {
+      "id": "metal_door",
+      "name": "Sheet Metal Door",
+      "shortname": "door.hinged.metal",
+      "category": "Construction",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "armored_door",
+      "name": "Armored Door",
+      "shortname": "door.hinged.toptier",
+      "category": "Construction",
+      "price": 8,
+      "quantity": 1
+    },
+    {
+      "id": "floor_grill",
+      "name": "Floor Grill",
+      "shortname": "floor.grill",
+      "category": "Construction",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "ladder_hatch",
+      "name": "Ladder Hatch",
+      "shortname": "floor.ladder.hatch",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "triangle_floor_grill",
+      "name": "Triangle Floor Grill",
+      "shortname": "floor.triangle.grill",
+      "category": "Construction",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "triangle_ladder_hatch",
+      "name": "Triangle Ladder Hatch",
+      "shortname": "floor.triangle.ladder.hatch",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "prison_cell_gate",
+      "name": "Prison Cell Gate",
+      "shortname": "wall.frame.cell.gate",
+      "category": "Construction",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "prison_cell_wall",
+      "name": "Prison Cell Wall",
+      "shortname": "wall.frame.cell",
+      "category": "Construction",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "chainlink_fence_gate",
+      "name": "Chainlink Fence Gate",
+      "shortname": "wall.frame.fence.gate",
+      "category": "Construction",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "chainlink_fence",
+      "name": "Chainlink Fence",
+      "shortname": "wall.frame.fence",
+      "category": "Construction",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "wooden_ladder",
+      "name": "Wooden Ladder",
+      "shortname": "ladder.wooden.wall",
+      "category": "Construction",
+      "price": 5,
+      "quantity": 1
+    },
+    {
+      "id": "garage_door",
+      "name": "Garage Door",
+      "shortname": "wall.frame.garagedoor",
+      "category": "Construction",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "netting",
+      "name": "Netting",
+      "shortname": "wall.frame.netting",
+      "category": "Construction",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "metal_shop_front",
+      "name": "Metal Shop Front",
+      "shortname": "wall.frame.shopfront.metal",
+      "category": "Construction",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "reinforced_window_bars",
+      "name": "Reinforced Window Bars",
+      "shortname": "wall.window.bars.toptier",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "metal_embrasure_a",
+      "name": "Metal Embrasure",
+      "shortname": "shutter.metal.embrasure.a",
+      "category": "Construction",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "metal_embrasure_b",
+      "name": "Metal Vertical Embrasure",
+      "shortname": "shutter.metal.embrasure.b",
+      "category": "Construction",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "reinforced_glass_window",
+      "name": "Reinforced Glass Window",
+      "shortname": "wall.window.glass.reinforced",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "concrete_barricade",
+      "name": "Concrete Barricade",
+      "shortname": "barricade.concrete",
+      "category": "Construction",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "wood_barricade",
+      "name": "Wooden Barricade",
+      "shortname": "barricade.wood.cover",
+      "category": "Construction",
+      "price": 1,
+      "quantity": 10
+    },
+    {
+      "id": "metal_barricade",
+      "name": "Metal Barricade",
+      "shortname": "barricade.metal",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "auto_turret",
+      "name": "Auto Turret",
+      "shortname": "autoturret",
+      "category": "Construction",
+      "price": 5,
+      "quantity": 1
+    },
+    {
+      "id": "shotgun_trap",
+      "name": "Shotgun Trap",
+      "shortname": "guntrap",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "chainsaw",
+      "name": "Chainsaw",
+      "shortname": "chainsaw",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "jackhammer",
+      "name": "Jackhammer",
+      "shortname": "jackhammer",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "holosight",
+      "name": "Holosight",
+      "shortname": "weapon.mod.holosight",
+      "category": "Attachments",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "4x_scope",
+      "name": "4x Zoom Scope",
+      "shortname": "weapon.mod.small.scope",
+      "category": "Attachments",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "flashlight",
+      "name": "Weapon Flashlight",
+      "shortname": "weapon.mod.flashlight",
+      "category": "Attachments",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "lasersight",
+      "name": "Laser Sight",
+      "shortname": "weapon.mod.lasersight",
+      "category": "Attachments",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "muzzleboost",
+      "name": "Muzzle Boost",
+      "shortname": "weapon.mod.muzzleboost",
+      "category": "Attachments",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "silencer",
+      "name": "Silencer",
+      "shortname": "weapon.mod.silencer",
+      "category": "Attachments",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "ammo_handmade_shell",
+      "name": "Ammo Handmade Shell",
+      "shortname": "ammo.handmade.shell",
+      "category": "Ammunition",
+      "price": 2,
+      "quantity": 128
+    },
+    {
+      "id": "ammo_nailgun_nails",
+      "name": "Ammo Nailgun Nails",
+      "shortname": "ammo.nailgun.nails",
+      "category": "Ammunition",
+      "price": 2,
+      "quantity": 64
+    },
+    {
+      "id": "ammo_pistol_fire",
+      "name": "Ammo Pistol Fire",
+      "shortname": "ammo.pistol.fire",
+      "category": "Ammunition",
+      "price": 2,
+      "quantity": 128
+    },
+    {
+      "id": "ammo_pistol_hv",
+      "name": "Ammo Pistol Hv",
+      "shortname": "ammo.pistol.hv",
+      "category": "Ammunition",
+      "price": 2,
+      "quantity": 128
+    },
+    {
+      "id": "ammo_rifle_explosive",
+      "name": "Ammo Rifle Explosive",
+      "shortname": "ammo.rifle.explosive",
+      "category": "Ammunition",
+      "price": 15,
+      "quantity": 128
+    },
+    {
+      "id": "ammo_rifle_hv",
+      "name": "Ammo Rifle Hv",
+      "shortname": "ammo.rifle.hv",
+      "category": "Ammunition",
+      "price": 2,
+      "quantity": 128
+    },
+    {
+      "id": "ammo_rocket_basic",
+      "name": "Ammo Rocket Basic",
+      "shortname": "ammo.rocket.basic",
+      "category": "Ammunition",
+      "price": 15,
+      "quantity": 3
+    },
+    {
+      "id": "ammo_rocket_fire",
+      "name": "Ammo Rocket Fire",
+      "shortname": "ammo.rocket.fire",
+      "category": "Ammunition",
+      "price": 15,
+      "quantity": 3
+    },
+    {
+      "id": "ammo_rocket_hv",
+      "name": "Ammo Rocket Hv",
+      "shortname": "ammo.rocket.hv",
+      "category": "Ammunition",
+      "price": 15,
+      "quantity": 3
+    },
+    {
+      "id": "ammo_shotgun_fire",
+      "name": "Ammo Shotgun Fire",
+      "shortname": "ammo.shotgun.fire",
+      "category": "Ammunition",
+      "price": 2,
+      "quantity": 32
+    },
+    {
+      "id": "weapon_mod_8x_scope",
+      "name": "Weapon Mod 8x Scope",
+      "shortname": "weapon.mod.8x.scope",
+      "category": "Attachments",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "weapon_mod_muzzlebrake",
+      "name": "Weapon Mod Muzzlebrake",
+      "shortname": "weapon.mod.muzzlebrake",
+      "category": "Attachments",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "weapon_mod_simplesight",
+      "name": "Weapon Mod Simplesight",
+      "shortname": "weapon.mod.simplesight",
+      "category": "Attachments",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "attire_ninja_suit",
+      "name": "Attire Ninja Suit",
+      "shortname": "attire.ninja.suit",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "bone_armor_suit",
+      "name": "Bone Armor Suit",
+      "shortname": "bone.armor.suit",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "boots_frog",
+      "name": "Boots Frog",
+      "shortname": "boots.frog",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "bucket_helmet",
+      "name": "Bucket Helmet",
+      "shortname": "bucket.helmet",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "burlap_gloves",
+      "name": "Burlap Gloves",
+      "shortname": "burlap.gloves",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "burlap_headwrap",
+      "name": "Burlap Headwrap",
+      "shortname": "burlap.headwrap",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "burlap_shirt",
+      "name": "Burlap Shirt",
+      "shortname": "burlap.shirt",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "burlap_shoes",
+      "name": "Burlap Shoes",
+      "shortname": "burlap.shoes",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "burlap_trousers",
+      "name": "Burlap Trousers",
+      "shortname": "burlap.trousers",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "coffeecan_helmet",
+      "name": "Coffeecan Helmet",
+      "shortname": "coffeecan.helmet",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "deer_skull_mask",
+      "name": "Deer Skull Mask",
+      "shortname": "deer.skull.mask",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "diving_fins",
+      "name": "Diving Fins",
+      "shortname": "diving.fins",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "diving_mask",
+      "name": "Diving Mask",
+      "shortname": "diving.mask",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "diving_tank",
+      "name": "Diving Tank",
+      "shortname": "diving.tank",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "diving_wetsuit",
+      "name": "Diving Wetsuit",
+      "shortname": "diving.wetsuit",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "halloween_surgeonsuit",
+      "name": "Halloween Surgeonsuit",
+      "shortname": "halloween.surgeonsuit",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "hat_beenie",
+      "name": "Hat Beenie",
+      "shortname": "hat.beenie",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "hat_boonie",
+      "name": "Hat Boonie",
+      "shortname": "hat.boonie",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "hat_candle",
+      "name": "Hat Candle",
+      "shortname": "hat.candle",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "hat_cap",
+      "name": "Hat Cap",
+      "shortname": "hat.cap",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "hat_gas_mask",
+      "name": "Hat Gas Mask",
+      "shortname": "hat.gas.mask",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "hat_miner",
+      "name": "Hat Miner",
+      "shortname": "hat.miner",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "heavy_plate_helmet",
+      "name": "Heavy Plate Helmet",
+      "shortname": "heavy.plate.helmet",
+      "category": "Attire",
+      "price": 5,
+      "quantity": 1
+    },
+    {
+      "id": "heavy_plate_jacket",
+      "name": "Heavy Plate Jacket",
+      "shortname": "heavy.plate.jacket",
+      "category": "Attire",
+      "price": 5,
+      "quantity": 1
+    },
+    {
+      "id": "heavy_plate_pants",
+      "name": "Heavy Plate Pants",
+      "shortname": "heavy.plate.pants",
+      "category": "Attire",
+      "price": 5,
+      "quantity": 1
+    },
+    {
+      "id": "horse_armor_roadsign",
+      "name": "Horse Armor Roadsign",
+      "shortname": "horse.armor.roadsign",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "horse_armor_wood",
+      "name": "Horse Armor Wood",
+      "shortname": "horse.armor.wood",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "horse_saddle",
+      "name": "Horse Saddle",
+      "shortname": "horse.saddle",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "jacket",
+      "name": "Jacket",
+      "shortname": "jacket",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "jacket_snow",
+      "name": "Jacket Snow",
+      "shortname": "jacket.snow",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "jumpsuit_suit",
+      "name": "Jumpsuit Suit",
+      "shortname": "jumpsuit.suit",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "largebackpack",
+      "name": "Largebackpack",
+      "shortname": "largebackpack",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "mask_balaclava",
+      "name": "Mask Balaclava",
+      "shortname": "mask.balaclava",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "mask_bandana",
+      "name": "Mask Bandana",
+      "shortname": "mask.bandana",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "pants_shorts",
+      "name": "Pants Shorts",
+      "shortname": "pants.shorts",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "riot_helmet",
+      "name": "Riot Helmet",
+      "shortname": "riot.helmet",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "roadsign_gloves",
+      "name": "Roadsign Gloves",
+      "shortname": "roadsign.gloves",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "roadsign_jacket",
+      "name": "Roadsign Jacket",
+      "shortname": "roadsign.jacket",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "shirt_collared",
+      "name": "Shirt Collared",
+      "shortname": "shirt.collared",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "shirt_tanktop",
+      "name": "Shirt Tanktop",
+      "shortname": "shirt.tanktop",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "smallbackpack",
+      "name": "Smallbackpack",
+      "shortname": "smallbackpack",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "sunglasses",
+      "name": "Sunglasses",
+      "shortname": "sunglasses",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "tshirt",
+      "name": "Tshirt",
+      "shortname": "tshirt",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "tshirt_long",
+      "name": "Tshirt Long",
+      "shortname": "tshirt.long",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "wood_armor_helmet",
+      "name": "Wood Armor Helmet",
+      "shortname": "wood.armor.helmet",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "wood_armor_jacket",
+      "name": "Wood Armor Jacket",
+      "shortname": "wood.armor.jacket",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "wood_armor_pants",
+      "name": "Wood Armor Pants",
+      "shortname": "wood.armor.pants",
+      "category": "Attire",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "cctv_camera",
+      "name": "Cctv Camera",
+      "shortname": "cctv.camera",
+      "category": "Components",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "keycard_blue",
+      "name": "Keycard Blue",
+      "shortname": "keycard_blue",
+      "category": "Components",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "keycard_green",
+      "name": "Keycard Green",
+      "shortname": "keycard_green",
+      "category": "Components",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "keycard_red",
+      "name": "Keycard Red",
+      "shortname": "keycard_red",
+      "category": "Components",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "targeting_computer",
+      "name": "Targeting Computer",
+      "shortname": "targeting.computer",
+      "category": "Components",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "barricade_sandbags",
+      "name": "Barricade Sandbags",
+      "shortname": "barricade.sandbags",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "barricade_stone",
+      "name": "Barricade Stone",
+      "shortname": "barricade.stone",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "barricade_wood",
+      "name": "Barricade Wood",
+      "shortname": "barricade.wood",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "barricade_woodwire",
+      "name": "Barricade Woodwire",
+      "shortname": "barricade.woodwire",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "bed",
+      "name": "Bed",
+      "shortname": "bed",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "box_repair_bench",
+      "name": "Box Repair Bench",
+      "shortname": "box.repair.bench",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "box_wooden",
+      "name": "Box Wooden",
+      "shortname": "box.wooden",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "box_wooden_large",
+      "name": "Box Wooden Large",
+      "shortname": "box.wooden.large",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "campfire",
+      "name": "Campfire",
+      "shortname": "campfire",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "chair",
+      "name": "Chair",
+      "shortname": "chair",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "composter",
+      "name": "Composter",
+      "shortname": "composter",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "door_closer",
+      "name": "Door Closer",
+      "shortname": "door.closer",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "door_double_hinged_wood",
+      "name": "Door Double Hinged Wood",
+      "shortname": "door.double.hinged.wood",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "door_hinged_wood",
+      "name": "Door Hinged Wood",
+      "shortname": "door.hinged.wood",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "dropbox",
+      "name": "Dropbox",
+      "shortname": "dropbox",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "electric_generator_small",
+      "name": "Electric Generator Small",
+      "shortname": "electric.generator.small",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "fireplace_stone",
+      "name": "Fireplace Stone",
+      "shortname": "fireplace.stone",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "fridge",
+      "name": "Fridge",
+      "shortname": "fridge",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "furnace",
+      "name": "Furnace",
+      "shortname": "furnace",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "furnace_large",
+      "name": "Furnace Large",
+      "shortname": "furnace.large",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "lantern",
+      "name": "Lantern",
+      "shortname": "lantern",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "lock_key",
+      "name": "Lock Key",
+      "shortname": "lock.key",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "locker",
+      "name": "Locker",
+      "shortname": "locker",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "mailbox",
+      "name": "Mailbox",
+      "shortname": "mailbox",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "mixingtable",
+      "name": "Mixingtable",
+      "shortname": "mixingtable",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "planter_large",
+      "name": "Planter Large",
+      "shortname": "planter.large",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "planter_small",
+      "name": "Planter Small",
+      "shortname": "planter.small",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "research_table",
+      "name": "Research Table",
+      "shortname": "research.table",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "rug",
+      "name": "Rug",
+      "shortname": "rug",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "shutter_wood_a",
+      "name": "Shutter Wood A",
+      "shortname": "shutter.wood.a",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "sleepingbag",
+      "name": "Sleepingbag",
+      "shortname": "sleepingbag",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "small_oil_refinery",
+      "name": "Small Oil Refinery",
+      "shortname": "small.oil.refinery",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "sofa",
+      "name": "Sofa",
+      "shortname": "sofa",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "stash_small",
+      "name": "Stash Small",
+      "shortname": "stash.small",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "table",
+      "name": "Table",
+      "shortname": "table",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "tunalight",
+      "name": "Tunalight",
+      "shortname": "tunalight",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "vending_machine",
+      "name": "Vending Machine",
+      "shortname": "vending.machine",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "wall_frame_shopfront",
+      "name": "Wall Frame Shopfront",
+      "shortname": "wall.frame.shopfront",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "wall_window_bars_metal",
+      "name": "Wall Window Bars Metal",
+      "shortname": "wall.window.bars.metal",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "wall_window_bars_wood",
+      "name": "Wall Window Bars Wood",
+      "shortname": "wall.window.bars.wood",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "watchtower_wood",
+      "name": "Watchtower Wood",
+      "shortname": "watchtower.wood",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "water_barrel",
+      "name": "Water Barrel",
+      "shortname": "water.barrel",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "water_catcher_large",
+      "name": "Water Catcher Large",
+      "shortname": "water.catcher.large",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "water_catcher_small",
+      "name": "Water Catcher Small",
+      "shortname": "water.catcher.small",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "water_purifier",
+      "name": "Water Purifier",
+      "shortname": "water.purifier",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "workbench1",
+      "name": "Workbench1",
+      "shortname": "workbench1",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "workbench2",
+      "name": "Workbench2",
+      "shortname": "workbench2",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "workbench3",
+      "name": "Workbench3",
+      "shortname": "workbench3",
+      "category": "Construction",
+      "price": 2,
+      "quantity": 1
+    },
+    {
+      "id": "apple",
+      "name": "Apple",
+      "shortname": "apple",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "bbq",
+      "name": "Bbq",
+      "shortname": "bbq",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "can_beans",
+      "name": "Can Beans",
+      "shortname": "can.beans",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "can_beans_empty",
+      "name": "Can Beans Empty",
+      "shortname": "can.beans.empty",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "can_tuna",
+      "name": "Can Tuna",
+      "shortname": "can.tuna",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "can_tuna_empty",
+      "name": "Can Tuna Empty",
+      "shortname": "can.tuna.empty",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "chocolate",
+      "name": "Chocolate",
+      "shortname": "chocolate",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "corn",
+      "name": "Corn",
+      "shortname": "corn",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "granolabar",
+      "name": "Granolabar",
+      "shortname": "granolabar",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "healingtea",
+      "name": "Healingtea",
+      "shortname": "healingtea",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "healingtea_advanced",
+      "name": "Healingtea Advanced",
+      "shortname": "healingtea.advanced",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "healingtea_pure",
+      "name": "Healingtea Pure",
+      "shortname": "healingtea.pure",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "maxhealthtea",
+      "name": "Maxhealthtea",
+      "shortname": "maxhealthtea",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "maxhealthtea_advanced",
+      "name": "Maxhealthtea Advanced",
+      "shortname": "maxhealthtea.advanced",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "maxhealthtea_pure",
+      "name": "Maxhealthtea Pure",
+      "shortname": "maxhealthtea.pure",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "oretea",
+      "name": "Oretea",
+      "shortname": "oretea",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "oretea_advanced",
+      "name": "Oretea Advanced",
+      "shortname": "oretea.advanced",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "oretea_pure",
+      "name": "Oretea Pure",
+      "shortname": "oretea.pure",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "pumpkin",
+      "name": "Pumpkin",
+      "shortname": "pumpkin",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "scraptea",
+      "name": "Scraptea",
+      "shortname": "scraptea",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "scraptea_advanced",
+      "name": "Scraptea Advanced",
+      "shortname": "scraptea.advanced",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "scraptea_pure",
+      "name": "Scraptea Pure",
+      "shortname": "scraptea.pure",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "water",
+      "name": "Water",
+      "shortname": "water",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "woodtea",
+      "name": "Woodtea",
+      "shortname": "woodtea",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "woodtea_advanced",
+      "name": "Woodtea Advanced",
+      "shortname": "woodtea.advanced",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "woodtea_pure",
+      "name": "Woodtea Pure",
+      "shortname": "woodtea.pure",
+      "category": "Consumables",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "antiradpills",
+      "name": "Antiradpills",
+      "shortname": "antiradpills",
+      "category": "Medical",
+      "price": 1,
+      "quantity": 1
+    },
+    {
+      "id": "axe_salvaged",
+      "name": "Axe Salvaged",
+      "shortname": "axe.salvaged",
+      "category": "Misc",
+      "price": 4,
+      "quantity": 1
+    },
+    {
+      "id": "kayak",
+      "name": "Kayak",
+      "shortname": "kayak",
+      "category": "Misc",
+      "price": 4,
+      "quantity": 1
+    },
+    {
+      "id": "map",
+      "name": "Map",
+      "shortname": "map",
+      "category": "Misc",
+      "price": 4,
+      "quantity": 1
+    },
+    {
+      "id": "nightvisiongoggles",
+      "name": "Nightvisiongoggles",
+      "shortname": "nightvisiongoggles",
+      "category": "Misc",
+      "price": 4,
+      "quantity": 1
+    },
+    {
+      "id": "bone_fragments",
+      "name": "Bone Fragments",
+      "shortname": "bone.fragments",
+      "category": "Resources",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "charcoal",
+      "name": "Charcoal",
+      "shortname": "charcoal",
+      "category": "Resources",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "cloth",
+      "name": "Cloth",
+      "shortname": "cloth",
+      "category": "Resources",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "crude_oil",
+      "name": "Crude Oil",
+      "shortname": "crude.oil",
+      "category": "Resources",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "diesel_barrel",
+      "name": "Diesel Barrel",
+      "shortname": "diesel_barrel",
+      "category": "Resources",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "explosives",
+      "name": "Explosives",
+      "shortname": "explosives",
+      "category": "Resources",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "fat_animal",
+      "name": "Fat Animal",
+      "shortname": "fat.animal",
+      "category": "Resources",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "fertilizer",
+      "name": "Fertilizer",
+      "shortname": "fertilizer",
+      "category": "Resources",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "gunpowder",
+      "name": "Gunpowder",
+      "shortname": "gunpowder",
+      "category": "Resources",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "hq_metal_ore",
+      "name": "Hq Metal Ore",
+      "shortname": "hq.metal.ore",
+      "category": "Resources",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "leather",
+      "name": "Leather",
+      "shortname": "leather",
+      "category": "Resources",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "lowgradefuel",
+      "name": "Lowgradefuel",
+      "shortname": "lowgradefuel",
+      "category": "Resources",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "metal_ore",
+      "name": "Metal Ore",
+      "shortname": "metal.ore",
+      "category": "Resources",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "scrap",
+      "name": "Scrap",
+      "shortname": "scrap",
+      "category": "Resources",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "stones",
+      "name": "Stones",
+      "shortname": "stones",
+      "category": "Resources",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "sulfur",
+      "name": "Sulfur",
+      "shortname": "sulfur",
+      "category": "Resources",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "sulfur_ore",
+      "name": "Sulfur Ore",
+      "shortname": "sulfur.ore",
+      "category": "Resources",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "building_planner",
+      "name": "Building Planner",
+      "shortname": "building.planner",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "flare",
+      "name": "Flare",
+      "shortname": "flare",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "flashlight_held",
+      "name": "Flashlight Held",
+      "shortname": "flashlight.held",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "geiger_counter",
+      "name": "Geiger Counter",
+      "shortname": "geiger.counter",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "hammer",
+      "name": "Hammer",
+      "shortname": "hammer",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "hammer_salvaged",
+      "name": "Hammer Salvaged",
+      "shortname": "hammer.salvaged",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "hatchet",
+      "name": "Hatchet",
+      "shortname": "hatchet",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "icepick_salvaged",
+      "name": "Icepick Salvaged",
+      "shortname": "icepick.salvaged",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "pickaxe",
+      "name": "Pickaxe",
+      "shortname": "pickaxe",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "rf_detonator",
+      "name": "Rf Detonator",
+      "shortname": "rf.detonator",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "rock",
+      "name": "Rock",
+      "shortname": "rock",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "spraycan",
+      "name": "Spraycan",
+      "shortname": "spraycan",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "stone_pickaxe",
+      "name": "Stone Pickaxe",
+      "shortname": "stone.pickaxe",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "stonehatchet",
+      "name": "Stonehatchet",
+      "shortname": "stonehatchet",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "supply_signal",
+      "name": "Supply Signal",
+      "shortname": "supply.signal",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "surveycharge",
+      "name": "Surveycharge",
+      "shortname": "surveycharge",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "tool_binoculars",
+      "name": "Tool Binoculars",
+      "shortname": "tool.binoculars",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "torch",
+      "name": "Torch",
+      "shortname": "torch",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "wiretool",
+      "name": "Wiretool",
+      "shortname": "wiretool",
+      "category": "Tools",
+      "price": 3,
+      "quantity": 1
+    },
+    {
+      "id": "bone_club",
+      "name": "Bone Club",
+      "shortname": "bone.club",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "bow_compound",
+      "name": "Bow Compound",
+      "shortname": "bow.compound",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "bow_hunting",
+      "name": "Bow Hunting",
+      "shortname": "bow.hunting",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "crossbow",
+      "name": "Crossbow",
+      "shortname": "crossbow",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "explosive_satchel",
+      "name": "Explosive Satchel",
+      "shortname": "explosive.satchel",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "explosive_timed",
+      "name": "Explosive Timed",
+      "shortname": "explosive.timed",
+      "category": "Weapons",
+      "price": 35,
+      "quantity": 1
+    },
+    {
+      "id": "flamethrower",
+      "name": "Flamethrower",
+      "shortname": "flamethrower",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "grenade_beancan",
+      "name": "Grenade Beancan",
+      "shortname": "grenade.beancan",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "grenade_f1",
+      "name": "Grenade F1",
+      "shortname": "grenade.f1",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "grenade_smoke",
+      "name": "Grenade Smoke",
+      "shortname": "grenade.smoke",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "knife_bone",
+      "name": "Knife Bone",
+      "shortname": "knife.bone",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "knife_butcher",
+      "name": "Knife Butcher",
+      "shortname": "knife.butcher",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "knife_combat",
+      "name": "Knife Combat",
+      "shortname": "knife.combat",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "longsword",
+      "name": "Longsword",
+      "shortname": "longsword",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "mace",
+      "name": "Mace",
+      "shortname": "mace",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "machete",
+      "name": "Machete",
+      "shortname": "machete",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "multiplegrenadelauncher",
+      "name": "Multiplegrenadelauncher",
+      "shortname": "multiplegrenadelauncher",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "paddle",
+      "name": "Paddle",
+      "shortname": "paddle",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "pistol_eoka",
+      "name": "Pistol Eoka",
+      "shortname": "pistol.eoka",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "pistol_nailgun",
+      "name": "Pistol Nailgun",
+      "shortname": "pistol.nailgun",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "pistol_revolver",
+      "name": "Pistol Revolver",
+      "shortname": "pistol.revolver",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "pistol_semiauto",
+      "name": "Pistol Semiauto",
+      "shortname": "pistol.semiauto",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "pitchfork",
+      "name": "Pitchfork",
+      "shortname": "pitchfork",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "rifle_m39",
+      "name": "Rifle M39",
+      "shortname": "rifle.m39",
+      "category": "Weapons",
+      "price": 12,
+      "quantity": 1
+    },
+    {
+      "id": "rocket_launcher",
+      "name": "Rocket Launcher",
+      "shortname": "rocket.launcher",
+      "category": "Weapons",
+      "price": 80,
+      "quantity": 1
+    },
+    {
+      "id": "salvaged_cleaver",
+      "name": "Salvaged Cleaver",
+      "shortname": "salvaged.cleaver",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "salvaged_sword",
+      "name": "Salvaged Sword",
+      "shortname": "salvaged.sword",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "shotgun_double",
+      "name": "Shotgun Double",
+      "shortname": "shotgun.double",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "shotgun_m4",
+      "name": "Shotgun M4",
+      "shortname": "shotgun.m4",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "shotgun_spas12",
+      "name": "Shotgun Spas12",
+      "shortname": "shotgun.spas12",
+      "category": "Weapons",
+      "price": 12,
+      "quantity": 1
+    },
+    {
+      "id": "shotgun_waterpipe",
+      "name": "Shotgun Waterpipe",
+      "shortname": "shotgun.waterpipe",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "spear_stone",
+      "name": "Spear Stone",
+      "shortname": "spear.stone",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "spear_wooden",
+      "name": "Spear Wooden",
+      "shortname": "spear.wooden",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "speargun",
+      "name": "Speargun",
+      "shortname": "speargun",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    },
+    {
+      "id": "speargun_spear",
+      "name": "Speargun Spear",
+      "shortname": "speargun.spear",
+      "category": "Weapons",
+      "price": 7,
+      "quantity": 1
+    }
+  ]
+}

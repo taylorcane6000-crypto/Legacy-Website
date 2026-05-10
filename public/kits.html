@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Legacy Rust Servers | Kits</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/legacy-theme.css">
+</head>
+<body class="page-kits">
+    <script src="/assets/legacy-navbar.js"></script>
+    <main class="legacy-page-wrap">
+        <div id="auth-loading" class="text-center py-16 text-gray-400">
+            <i class="fa-solid fa-spinner fa-spin text-3xl"></i>
+            <p class="mt-3 uppercase tracking-widest text-xs">Checking login</p>
+        </div>
+
+        <div id="login-required" class="hidden text-center py-16 legacy-card max-w-xl mx-auto" style="border-color: rgba(168, 85, 247, 0.35);">
+            <i class="fa-solid fa-lock text-4xl text-[#c084fc] mb-4"></i>
+            <h2 class="legacy-heading text-3xl mb-3">You Need To Log In</h2>
+            <p class="text-gray-400 mb-6">Sign in with Discord to view your kits and claim rank purchases.</p>
+            <div class="flex flex-wrap justify-center gap-2">
+                <a href="/auth/discord" class="legacy-btn legacy-btn-primary text-decoration-none"><i class="fa-brands fa-discord mr-1"></i>Login with Discord</a>
+                <a href="/" class="legacy-btn text-decoration-none">Back to store</a>
+            </div>
+        </div>
+
+        <div id="kits-authed-wrap" class="hidden">
+        <header class="text-center mb-8">
+            <h1 class="legacy-heading text-5xl">Your Kits</h1>
+            <p class="text-gray-400">Owned kits can be claimed on cooldown. Rank kits you have not bought yet are listed below.</p>
+        </header>
+
+        <div id="loading" class="text-center py-16 text-gray-400">
+            <i class="fa-solid fa-spinner fa-spin text-3xl"></i>
+            <p class="mt-3 uppercase tracking-widest text-xs">Loading Kits</p>
+        </div>
+        <div id="error" class="hidden text-center py-16 legacy-card" style="border-color:rgba(239,68,68,.5);">
+            <i class="fa-solid fa-triangle-exclamation text-4xl text-red-400"></i>
+            <h3 class="text-2xl legacy-heading mt-4">Failed To Load Kits</h3>
+        </div>
+        <div id="empty" class="hidden text-center py-16 legacy-card">
+            <i class="fa-solid fa-box-open text-4xl text-gray-600"></i>
+            <h3 class="text-2xl legacy-heading mt-4">You Don't Have Any Kits Yet</h3>
+            <p class="text-gray-400 mt-2 max-w-lg mx-auto">Nothing is available to display. Open the store and complete a rank kit purchase — then it will show up here.</p>
+            <a href="/" class="legacy-btn legacy-btn-primary inline-block mt-4">Go To Store</a>
+        </div>
+
+        <div id="no-owned-kits-notice" class="hidden legacy-card p-6 mb-8" style="border-color: rgba(168, 85, 247, 0.35); background: linear-gradient(135deg, #141018 0%, #0f0f12 100%);">
+            <p class="text-gray-300 text-sm sm:text-base leading-relaxed m-0">
+                <i class="fa-solid fa-circle-info text-[#c084fc] mr-2"></i>
+                <strong class="text-white">You don't own any rank kits yet.</strong>
+                After you buy a rank kit and checkout finishes, your kit will appear under <span class="text-gray-400">Active Kits</span> and you can claim it on cooldown.
+            </p>
+        </div>
+
+        <section id="active-section" class="hidden mb-12">
+            <h2 class="legacy-heading text-3xl mb-4">Active Kits</h2>
+            <div id="active-grid" class="legacy-grid cols-3"></div>
+        </section>
+        <section id="expired-section" class="hidden mb-12">
+            <h2 class="legacy-heading text-2xl mb-4 text-gray-500">Expired Kits</h2>
+            <div id="expired-grid" class="legacy-grid cols-3"></div>
+        </section>
+        <section id="catalog-section" class="hidden mb-12">
+            <h2 class="legacy-heading text-3xl mb-4">Not Purchased Yet</h2>
+            <p class="text-gray-400 text-sm mb-4">These rank kits are available on the store. Buy one to unlock claiming here.</p>
+            <div id="catalog-grid" class="legacy-grid cols-3"></div>
+        </section>
+        </div>
+    </main>
+
+    <div id="toast" class="fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50"></div>
+
+    <script>
+        let kitsData = [];
+        let timerInterval = null;
+        function formatDuration(ms) {
+            if (ms <= 0) return 'Ready';
+            const totalSec = Math.floor(ms / 1000);
+            const h = Math.floor(totalSec / 3600);
+            const m = Math.floor((totalSec % 3600) / 60);
+            const s = totalSec % 60;
+            if (h > 0) return `${h}h ${m}m`;
+            if (m > 0) return `${m}m ${s}s`;
+            return `${s}s`;
+        }
+        function formatDate(value) {
+            const d = new Date(value);
+            if (Number.isNaN(d.getTime())) return 'Unknown';
+            return d.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `fixed bottom-4 right-4 ${isError ? 'bg-red-600' : 'bg-green-600'} text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 z-50`;
+            setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 2200);
+        }
+        function renderOwnedGrid(kits, targetId, expired = false) {
+            const target = document.getElementById(targetId);
+            target.innerHTML = kits.map((kit) => `
+                <article class="legacy-card p-4" data-kit-id="${kit.kitInstanceId}" style="${expired ? 'opacity:.6;' : ''}">
+                    <div class="legacy-product-thumb mb-3">
+                        <img src="${kit.image}" alt="${kit.name}" width="512" height="512" loading="lazy">
+                    </div>
+                    <h3 class="legacy-heading text-xl mb-1">${kit.name}</h3>
+                    <div class="text-xs text-gray-400 mb-3">${kit.productId}</div>
+                    <div class="text-sm text-gray-300 mb-3">
+                        <div>Purchased: ${formatDate(kit.orderCreatedAt)}</div>
+                        <div>Expires: ${formatDate(kit.expiresAt)}</div>
+                        <div>Claims: ${kit.claimCount}</div>
+                    </div>
+                    <div class="js-timer text-3xl legacy-heading mb-2 ${kit.isExpired ? 'text-red-400' : (kit.canClaim ? 'text-white' : 'text-gray-400')}">${kit.isExpired ? 'Expired' : (kit.canClaim ? 'Ready!' : formatDuration(kit.timeUntilClaim))}</div>
+                    <button type="button" class="js-claim-btn legacy-btn w-full ${kit.canClaim && !kit.isExpired ? 'legacy-btn-primary' : ''}" ${!kit.canClaim || kit.isExpired ? 'disabled' : ''} onclick="claimKit('${kit.kitInstanceId}')">${kit.isExpired ? 'Expired' : (kit.canClaim ? 'Claim Kit' : 'Cooldown')}</button>
+                </article>
+            `).join('');
+        }
+        function renderCatalogGrid(kits, targetId) {
+            const target = document.getElementById(targetId);
+            target.innerHTML = kits.map((kit) => `
+                <article class="legacy-card p-4" style="opacity:.92;">
+                    <div class="legacy-product-thumb mb-3">
+                        <img src="${kit.image}" alt="${kit.name}" width="512" height="512" loading="lazy">
+                    </div>
+                    <h3 class="legacy-heading text-xl mb-1">${kit.name}</h3>
+                    <div class="text-xs text-gray-400 mb-3">${kit.productId}</div>
+                    <p class="text-sm text-gray-400 mb-4">You have not purchased this kit yet.</p>
+                    <a href="/#ranks-section" class="legacy-btn legacy-btn-primary w-full text-center block" style="text-decoration:none;">View in store</a>
+                </article>
+            `).join('');
+        }
+        function updateTimerDisplay() {
+            let reload = false;
+            kitsData = kitsData.map((kit) => {
+                if (!kit.isExpired && kit.timeUntilClaim > 0) {
+                    const n = Math.max(0, kit.timeUntilClaim - 1000);
+                    if (n === 0) reload = true;
+                    return { ...kit, timeUntilClaim: n, canClaim: n === 0 };
+                }
+                return kit;
+            });
+            document.querySelectorAll('[data-kit-id]').forEach((node) => {
+                const id = node.dataset.kitId;
+                if (!id) return;
+                const kit = kitsData.find((k) => k.kitInstanceId === id);
+                if (!kit || kit.isCatalogOnly) return;
+                const timer = node.querySelector('.js-timer');
+                const button = node.querySelector('.js-claim-btn');
+                timer.textContent = kit.isExpired ? 'Expired' : (kit.canClaim ? 'Ready!' : formatDuration(kit.timeUntilClaim));
+                button.disabled = !kit.canClaim || kit.isExpired;
+                button.textContent = kit.isExpired ? 'Expired' : (kit.canClaim ? 'Claim Kit' : 'Cooldown');
+            });
+            if (reload) loadKitsData();
+        }
+        async function claimKit(kitInstanceId) {
+            if (!kitInstanceId) return;
+            try {
+                const response = await fetch('/api/purchased-kits/claim', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ kitInstanceId })
+                });
+                const data = await response.json();
+                if (!data.success) return showToast(data.error || 'Claim failed', true);
+                showToast(data.message || 'Claimed');
+                await loadKitsData();
+            } catch (e) { console.error(e); showToast('Claim failed', true); }
+        }
+        async function loadKitsData() {
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error');
+            const emptyEl = document.getElementById('empty');
+            const activeSection = document.getElementById('active-section');
+            const expiredSection = document.getElementById('expired-section');
+            const catalogSection = document.getElementById('catalog-section');
+            const noOwnedNotice = document.getElementById('no-owned-kits-notice');
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            emptyEl.classList.add('hidden');
+            noOwnedNotice.classList.add('hidden');
+            activeSection.classList.add('hidden');
+            expiredSection.classList.add('hidden');
+            catalogSection.classList.add('hidden');
+            try {
+                const res = await fetch('/api/purchased-kits', { credentials: 'same-origin' });
+                const data = await res.json();
+                loadingEl.classList.add('hidden');
+                if (!data.success) return errorEl.classList.remove('hidden');
+                kitsData = data.kits || [];
+                const active = kitsData.filter((k) => !k.isCatalogOnly && !k.isExpired);
+                const expired = kitsData.filter((k) => !k.isCatalogOnly && k.isExpired);
+                const catalog = kitsData.filter((k) => k.isCatalogOnly);
+                if (!active.length && !expired.length && !catalog.length) {
+                    emptyEl.classList.remove('hidden');
+                    return;
+                }
+                if (!active.length && !expired.length) {
+                    noOwnedNotice.classList.remove('hidden');
+                }
+                if (active.length) { renderOwnedGrid(active, 'active-grid'); activeSection.classList.remove('hidden'); }
+                if (expired.length) { renderOwnedGrid(expired, 'expired-grid', true); expiredSection.classList.remove('hidden'); }
+                if (catalog.length) { renderCatalogGrid(catalog, 'catalog-grid'); catalogSection.classList.remove('hidden'); }
+                if (timerInterval) clearInterval(timerInterval);
+                timerInterval = setInterval(updateTimerDisplay, 1000);
+            } catch (e) {
+                console.error(e);
+                loadingEl.classList.add('hidden');
+                errorEl.classList.remove('hidden');
+            }
+        }
+        async function initKitsPage() {
+            const authLoadingEl = document.getElementById('auth-loading');
+            const loginRequiredEl = document.getElementById('login-required');
+            const authedWrapEl = document.getElementById('kits-authed-wrap');
+            authLoadingEl.classList.remove('hidden');
+            loginRequiredEl.classList.add('hidden');
+            authedWrapEl.classList.add('hidden');
+            try {
+                const authRes = await fetch('/api/user', { credentials: 'same-origin' });
+                const authData = await authRes.json();
+                authLoadingEl.classList.add('hidden');
+                if (!authData.loggedIn) {
+                    loginRequiredEl.classList.remove('hidden');
+                    return;
+                }
+                authedWrapEl.classList.remove('hidden');
+                await loadKitsData();
+            } catch (e) {
+                console.error(e);
+                authLoadingEl.classList.add('hidden');
+                loginRequiredEl.classList.remove('hidden');
+            }
+        }
+        document.addEventListener('DOMContentLoaded', initKitsPage);
+        window.addEventListener('beforeunload', () => { if (timerInterval) clearInterval(timerInterval); });
+    </script>
+    <script src="/assets/legacy-footer.js"></script>
+</body>
+</html>

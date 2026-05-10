@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Legacy Rust Servers | Purchase History</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/legacy-theme.css">
+</head>
+<body>
+    <script src="/assets/legacy-navbar.js"></script>
+    <main class="legacy-page-wrap">
+        <header class="text-center mb-8">
+            <h1 class="legacy-heading text-5xl">Purchase History</h1>
+            <p class="text-gray-400">All completed purchases from your account.</p>
+        </header>
+
+        <div id="loading" class="text-center py-16 text-gray-400">
+            <i class="fa-solid fa-spinner fa-spin text-3xl"></i>
+            <p class="mt-3 uppercase tracking-widest text-xs">Loading Purchases</p>
+        </div>
+
+        <div id="error" class="hidden text-center py-16 legacy-card" style="border-color:rgba(239,68,68,.5);">
+            <i class="fa-solid fa-triangle-exclamation text-4xl text-red-400"></i>
+            <h3 class="text-2xl legacy-heading mt-4">Failed To Load History</h3>
+        </div>
+
+        <div id="empty" class="hidden text-center py-16 legacy-card">
+            <i class="fa-solid fa-receipt text-4xl text-gray-600"></i>
+            <h3 class="text-2xl legacy-heading mt-4">You Haven't Purchased Anything Yet</h3>
+            <p class="text-gray-400 mt-2 max-w-md mx-auto">When you complete checkout, your orders will show up here.</p>
+            <a href="/" class="legacy-btn legacy-btn-primary inline-block mt-4">Go To Store</a>
+        </div>
+
+        <section id="history-section" class="hidden">
+            <div id="history-list" class="space-y-5"></div>
+        </section>
+    </main>
+
+    <script>
+        function money(cents) {
+            return `£${(Number(cents || 0) / 100).toFixed(2)}`;
+        }
+
+        function formatDate(value) {
+            const d = new Date(value);
+            if (Number.isNaN(d.getTime())) return 'Unknown';
+            return d.toLocaleString('en-GB', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function renderHistory(history) {
+            const target = document.getElementById('history-list');
+            target.innerHTML = history.map((order) => `
+                <article class="legacy-card p-5">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                        <div>
+                            <h2 class="legacy-heading text-xl">Order ${order.orderId}</h2>
+                            <div class="text-xs text-gray-400">Completed ${formatDate(order.createdAt)}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="legacy-heading text-lg">${money(order.amount)}</div>
+                            <div class="text-xs text-gray-400">${order.itemCount} item${order.itemCount === 1 ? '' : 's'}</div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        ${order.items.map((item) => `
+                            <div class="flex items-center gap-3 border border-white/10 rounded p-2 bg-white/5">
+                                <img src="${item.image || 'https://placehold.co/80x80/111/666?text=Item'}" alt="${item.name}" class="w-14 h-14 object-cover rounded border border-white/10">
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-bold truncate">${item.name}</div>
+                                    <div class="text-xs text-gray-400">${item.productId}</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm text-gray-300">x${item.qty}</div>
+                                    <div class="font-bold">${money(item.totalPrice)}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        async function loadHistory() {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const empty = document.getElementById('empty');
+            const section = document.getElementById('history-section');
+            loading.classList.remove('hidden');
+            error.classList.add('hidden');
+            empty.classList.add('hidden');
+            section.classList.add('hidden');
+
+            try {
+                const authRes = await fetch('/api/user', { credentials: 'same-origin' });
+                const authData = await authRes.json();
+                if (!authData.loggedIn) {
+                    window.location.href = '/auth/discord';
+                    return;
+                }
+
+                const res = await fetch('/api/purchase-history', { credentials: 'same-origin' });
+
+                let data = {};
+                try {
+                    data = await res.json();
+                } catch (parseErr) {
+                    loading.classList.add('hidden');
+                    error.classList.remove('hidden');
+                    return;
+                }
+
+                loading.classList.add('hidden');
+
+                if (res.status === 401) {
+                    window.location.href = '/auth/discord';
+                    return;
+                }
+
+                if (!res.ok || data.success === false) {
+                    error.classList.remove('hidden');
+                    return;
+                }
+
+                const history = Array.isArray(data.history) ? data.history : [];
+                if (!history.length) {
+                    empty.classList.remove('hidden');
+                    return;
+                }
+
+                renderHistory(history);
+                section.classList.remove('hidden');
+            } catch (e) {
+                console.error(e);
+                loading.classList.add('hidden');
+                error.classList.remove('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadHistory);
+    </script>
+    <script src="/assets/legacy-footer.js"></script>
+</body>
+</html>

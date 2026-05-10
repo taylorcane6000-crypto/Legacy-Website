@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Legacy Rust Servers | Setup Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/legacy-theme.css">
+</head>
+<body>
+    <script src="/assets/legacy-navbar.js"></script>
+
+    <main class="legacy-page-wrap" style="max-width:36rem;">
+        <section class="legacy-card p-6">
+            <h1 class="legacy-heading text-4xl mb-2">Link Identity</h1>
+            <p class="text-gray-400 mb-6">Set your gamertag and platform to continue.</p>
+            <form id="gamertagForm" class="space-y-4">
+                <div>
+                    <label class="text-sm text-gray-400">Gamer Tag / PSN ID</label>
+                    <input type="text" id="gamertag" required placeholder="e.g. RustKing99" class="w-full mt-1 bg-black border border-white/10 px-4 py-3 text-white">
+                </div>
+                <div>
+                    <label class="text-sm text-gray-400">Platform</label>
+                    <div class="flex gap-2 mt-2">
+                        <label class="legacy-btn"><input type="radio" name="console" value="Xbox" class="mr-2" required>Xbox</label>
+                        <label class="legacy-btn"><input type="radio" name="console" value="PlayStation" class="mr-2" required>PlayStation</label>
+                    </div>
+                </div>
+                <button type="submit" id="submitBtn" class="legacy-btn legacy-btn-primary w-full">Complete Setup</button>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        document.getElementById('gamertagForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const gamertag = document.getElementById('gamertag').value;
+            const consoleType = document.querySelector('input[name="console"]:checked').value;
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = 'Saving...';
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/save-gamertag', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ gamertag, consoleType })
+                });
+                if (res.ok) window.location.href = '/';
+                else {
+                    alert('Error saving data. Please try again.');
+                    btn.innerText = 'Complete Setup';
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Connection error.');
+                btn.innerText = 'Complete Setup';
+                btn.disabled = false;
+            }
+        });
+    </script>
+    <script src="/assets/legacy-footer.js"></script>
+</body>
+</html>

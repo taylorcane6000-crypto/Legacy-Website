@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Legacy Rust Servers | Gem Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/legacy-theme.css">
+    <style>
+        html, body {
+            background: radial-gradient(ellipse 120% 80% at 50% -20%, rgba(139, 92, 246, 0.18), transparent 55%), #0a0a0a;
+            color: #fff;
+        }
+        .gem-gradient {
+            background: linear-gradient(120deg, #e9d5ff, #c084fc, #a855f7, #d946ef);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .item-card { transition: border-color .2s, box-shadow .2s, transform .2s; }
+        .item-card:hover {
+            border-color: rgba(167, 139, 250, .5);
+            box-shadow: 0 0 0 1px rgba(139, 92, 246, .15), 0 12px 32px -12px rgba(88, 28, 135, .45);
+            transform: translateY(-2px);
+        }
+        .item-img { width: 56px; height: 56px; object-fit: contain; }
+        .cat-active {
+            border-color: #a855f7 !important;
+            color: #e9d5ff !important;
+            background: rgba(139, 92, 246, .18) !important;
+        }
+        .toast {
+            position: fixed;
+            z-index: 100;
+            left: max(0.75rem, env(safe-area-inset-left));
+            right: max(0.75rem, env(safe-area-inset-right));
+            bottom: max(1rem, env(safe-area-inset-bottom));
+            max-width: 24rem;
+            margin-left: auto;
+            opacity: 0;
+            transform: translateY(12px);
+            transition: .25s;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .gem-cat-scroll {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            padding-bottom: 0.35rem;
+            gap: 0.5rem;
+        }
+        .gem-cat-scroll::-webkit-scrollbar { height: 4px; }
+        .gem-cat-scroll::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.4); border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <script src="/assets/legacy-navbar.js"></script>
+
+    <main class="legacy-page-wrap max-w-6xl mx-auto py-6 sm:py-8">
+        <div id="page-hub">
+            <header class="text-center mb-6 sm:mb-8 px-1">
+                <h1 class="legacy-heading text-2xl sm:text-3xl md:text-4xl mb-2">
+                    <i class="fa-solid fa-gem text-violet-400 mr-2"></i><span class="gem-gradient">Gem Store</span>
+                </h1>
+            </header>
+
+            <div id="gems-banner" class="hidden mb-4 legacy-card p-4 text-center text-sm border border-violet-500/35 text-violet-200"></div>
+            <div id="gems-error" class="hidden mb-4 legacy-card p-4 text-center text-sm border border-red-500/30 text-red-300"></div>
+            <div id="gems-rcon-warn" class="hidden mb-4 legacy-card p-4 text-violet-200/95 text-sm border border-violet-500/30">
+                <i class="fa-solid fa-triangle-exclamation mr-2"></i>Gem item delivery needs <code class="text-gray-300">6X_RCON_*</code> in your server <code class="text-gray-300">.env</code>. You can still buy gems.
+            </div>
+
+            <div class="legacy-card p-4 mb-6 max-w-xl mx-auto border border-violet-500/20 text-sm text-gray-300">
+                <p class="text-violet-200 font-bold mb-2"><i class="fa-solid fa-clock mr-2"></i>Earn gems in-game</p>
+                <p id="gem-earn-blurb" class="text-gray-400 leading-relaxed">Loading…</p>
+                <p class="mt-3 mb-0">
+                    <a href="/gamble" class="text-violet-300 hover:text-white font-semibold"><i class="fa-solid fa-dice mr-1"></i>Gem casino</a>
+                    <span class="text-gray-500"> — Blackjack, Plinko &amp; Roulette.</span>
+                </p>
+            </div>
+
+            <div class="legacy-card p-6 mb-8 max-w-md mx-auto text-center border border-violet-500/25" style="background: linear-gradient(145deg, rgba(139, 92, 246, 0.12), #111);">
+                <p class="text-gray-500 text-[10px] uppercase tracking-[0.2em] mb-1 font-mono">Balance</p>
+                <p id="hub-balance" class="font-mono text-4xl font-bold text-violet-300 tabular-nums">—</p>
+                <p id="hub-login-msg" class="text-gray-500 text-sm mt-3 hidden">Log in with Discord to use the gem store.</p>
+                <div id="hub-actions" class="flex flex-wrap justify-center gap-2 mt-5 hidden">
+                    <button type="button" onclick="showPage('store')" class="legacy-btn legacy-btn-primary text-sm">Shop items</button>
+                    <button type="button" onclick="openBuyModal()" class="legacy-btn text-sm border-violet-500/45 text-violet-200">Buy gems</button>
+                    <button type="button" onclick="showPage('history')" class="legacy-btn text-sm">History</button>
+                </div>
+                <div class="mt-4">
+                    <a href="/auth/discord" id="hub-login-btn" class="legacy-btn legacy-btn-primary text-decoration-none text-sm hidden inline-flex items-center gap-1"><i class="fa-brands fa-discord"></i>Login</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-store" class="hidden">
+            <button type="button" onclick="showPage('hub')" class="text-gray-400 hover:text-white text-sm mb-4"><i class="fa-solid fa-arrow-left mr-1"></i>Back</button>
+            <h2 class="legacy-heading text-2xl mb-4">Spend gems</h2>
+            <p class="text-gray-500 text-sm mb-4">Items are sent with <code class="text-gray-400">giveto</code> to your store profile gamertag. Prices are in gems.</p>
+            <div id="category-tabs" class="flex gem-cat-scroll mb-6"></div>
+            <div id="items-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+
+        <div id="page-history" class="hidden">
+            <button type="button" onclick="showPage('hub')" class="text-gray-400 hover:text-white text-sm mb-4"><i class="fa-solid fa-arrow-left mr-1"></i>Back</button>
+            <h2 class="legacy-heading text-2xl mb-4">Gem history</h2>
+            <div id="history-list" class="space-y-2 text-sm font-mono text-gray-300"></div>
+        </div>
+    </main>
+
+    <div id="buy-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/75" onclick="if(event.target===this)closeBuyModal()">
+        <div class="legacy-card max-w-md w-full p-6 border border-violet-500/30" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="legacy-heading text-lg text-violet-200">Buy gems</h3>
+                <button type="button" onclick="closeBuyModal()" class="legacy-btn text-xs px-2 py-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="pack-list" class="space-y-2 mb-4"></div>
+            <div class="border-t border-white/10 pt-4">
+                <label class="text-xs text-gray-500 uppercase tracking-wider">Custom amount</label>
+                <div class="flex gap-2 mt-1">
+                    <input type="number" id="custom-gems-input" min="100" step="1" placeholder="e.g. 500"
+                        class="flex-1 bg-black/50 border border-white/15 rounded-lg px-3 py-2 text-white font-mono text-sm" />
+                    <button type="button" onclick="buyCustomGems()" class="legacy-btn text-sm whitespace-nowrap">Checkout</button>
+                </div>
+                <p id="custom-gems-hint" class="text-xs text-gray-500 mt-2"></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast legacy-card px-4 py-3 border border-white/10 max-w-sm">
+        <p id="toast-msg" class="text-sm"></p>
+    </div>
+
+    <script src="/assets/legacy-footer.js"></script>
+    <script>
+        let storeItems = [];
+        let activeCategory = 'All';
+        let quantities = {};
+        let customMin = 100;
+        let customMax = 100000;
+        let pencePer100Gems = 69;
+
+        function toast(msg, isErr) {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-msg').textContent = msg;
+            document.getElementById('toast-msg').className = isErr ? 'text-sm text-red-300' : 'text-sm text-violet-200';
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3500);
+        }
+
+        function apiFetch(url, opts) {
+            return fetch(url, Object.assign({ credentials: 'same-origin', headers: { 'Content-Type': 'application/json' } }, opts || {}));
+        }
+
+        async function parseJsonBody(res) {
+            const text = await res.text();
+            const t = text.trimStart();
+            if (t.startsWith('<')) {
+                throw new Error('Store API returned HTML, not JSON. Open /gems from your Node server (same URL as npm start), not a static file host or preview.');
+            }
+            try {
+                return JSON.parse(text);
+            } catch {
+                throw new Error('Invalid JSON from server (status ' + res.status + ').');
+            }
+        }
+
+        function getItemImageUrl(item) {
+            if (item && item.image) return item.image;
+            const sn = item && item.shortname;
+            return sn ? '/api/rust-image/' + encodeURIComponent(sn) : '';
+        }
+
+        function handleImgErr(img) {
+            const sn = img.getAttribute('data-sn');
+            if (img.dataset.tried) {
+                img.style.display = 'none';
+                return;
+            }
+            if (sn) {
+                img.dataset.tried = '1';
+                img.src = '/api/rust-image/' + encodeURIComponent(sn);
+            }
+        }
+
+        async function loadBalance() {
+            const el = document.getElementById('hub-balance');
+            try {
+                const res = await apiFetch('/api/gems/balance');
+                const data = await res.json();
+                if (!data.success) throw new Error(data.error || 'Failed');
+                el.textContent = Number(data.balance || 0).toLocaleString();
+            } catch (e) {
+                el.textContent = '—';
+            }
+        }
+
+        function showPage(name) {
+            document.getElementById('page-hub').classList.toggle('hidden', name !== 'hub');
+            document.getElementById('page-store').classList.toggle('hidden', name !== 'store');
+            document.getElementById('page-history').classList.toggle('hidden', name !== 'history');
+            if (name === 'store') loadStore();
+            if (name === 'history') loadHistory();
+        }
+
+        async function initAuthUi() {
+            const res = await apiFetch('/api/user');
+            const data = await res.json();
+            const authed = data.loggedIn && data.user;
+            document.getElementById('hub-login-msg').classList.toggle('hidden', authed);
+            document.getElementById('hub-login-btn').classList.toggle('hidden', authed);
+            document.getElementById('hub-actions').classList.toggle('hidden', !authed);
+            if (authed) loadBalance();
+        }
+
+        async function loadStore() {
+            const grid = document.getElementById('items-grid');
+            grid.innerHTML = '<p class="text-gray-500 col-span-full">Loading…</p>';
+            try {
+                const res = await apiFetch('/api/gems/store');
+                const data = await parseJsonBody(res);
+                if (!data.success) throw new Error(data.error);
+                storeItems = data.items || [];
+                document.getElementById('gems-rcon-warn').classList.toggle('hidden', data.rconConfigured !== false);
+                const cats = ['All', ...Object.keys(data.categories || {}).sort()];
+                document.getElementById('category-tabs').innerHTML = cats.map(c => `
+                    <button type="button" onclick="setCategory('${c.replace(/'/g, "\\'")}')"
+                        class="shrink-0 min-h-[44px] px-3 py-2 rounded-lg text-xs font-bold uppercase border touch-manipulation ${activeCategory === c ? 'cat-active' : 'border-white/15 text-gray-400'}">${c}</button>
+                `).join('');
+                renderItems();
+            } catch (e) {
+                grid.innerHTML = '<p class="text-red-400 col-span-full">' + (e.message || 'Could not load store') + '</p>';
+            }
+        }
+
+        function setCategory(c) {
+            activeCategory = c;
+            loadStore();
+        }
+
+        function renderItems() {
+            const grid = document.getElementById('items-grid');
+            const filtered = activeCategory === 'All' ? storeItems : storeItems.filter(i => i.category === activeCategory);
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p class="text-gray-500 col-span-full">No items.</p>';
+                return;
+            }
+            grid.innerHTML = filtered.map(item => {
+                const q = quantities[item.id] || 1;
+                const total = item.price * q;
+                const imgUrl = getItemImageUrl(item);
+                return `
+                <div class="item-card legacy-card p-4 border border-white/10">
+                    <div class="flex gap-3 mb-3">
+                        <div class="w-14 h-14 bg-black/40 rounded-lg flex items-center justify-center border border-white/10 shrink-0">
+                            ${imgUrl ? `<img src="${imgUrl}" alt="" class="item-img" data-sn="${String(item.shortname || '').replace(/"/g, '&quot;')}" onerror="handleImgErr(this)">`
+                            : '<i class="fa-solid fa-cube text-violet-500/50"></i>'}
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h3 class="font-bold text-white text-sm truncate">${item.name}</h3>
+                            <p class="text-xs text-gray-500">${item.category}</p>
+                            <p class="text-violet-300 font-mono font-bold mt-1"><i class="fa-solid fa-gem text-xs mr-1 text-fuchsia-400"></i>${item.price} <span class="text-gray-500 font-normal text-xs">/ batch (${item.quantity})</span></p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 mb-2 text-xs">
+                        <button type="button" onclick="chgQty('${item.id}',-1)" class="legacy-btn px-2 py-0.5">−</button>
+                        <span class="font-mono px-2" id="qty-${item.id}">${q}</span>
+                        <button type="button" onclick="chgQty('${item.id}',1)" class="legacy-btn px-2 py-0.5">+</button>
+                        <span class="text-gray-500 ml-auto">Total <span class="text-fuchsia-300 font-mono" id="tot-${item.id}">${total}</span></span>
+                    </div>
+                    <button type="button" onclick="buyItem('${item.id}')" class="legacy-btn legacy-btn-primary w-full text-sm">Buy for <i class="fa-solid fa-gem mx-1"></i>${total}</button>
+                </div>`;
+            }).join('');
+        }
+
+        function chgQty(id, d) {
+            const item = storeItems.find(i => i.id === id);
+            if (!item) return;
+            const q = Math.max(1, Math.min(100, (quantities[id] || 1) + d));
+            quantities[id] = q;
+            const el = document.getElementById('qty-' + id);
+            const te = document.getElementById('tot-' + id);
+            if (el) el.textContent = q;
+            if (te) te.textContent = item.price * q;
+        }
+
+        async function buyItem(itemId) {
+            const item = storeItems.find(i => i.id === itemId);
+            if (!item) return;
+            const q = quantities[itemId] || 1;
+            try {
+                const res = await apiFetch('/api/gems/purchase', {
+                    method: 'POST',
+                    body: JSON.stringify({ item_id: itemId, quantity: q })
+                });
+                let data = {};
+                try { data = await res.json(); } catch (_) {}
+                if (res.status === 401) {
+                    toast('Log in to purchase', true);
+                    return;
+                }
+                if (!data.success) {
+                    toast(data.error || 'Purchase failed', true);
+                    return;
+                }
+                toast(data.message || 'Delivered!');
+                quantities[itemId] = 1;
+                document.getElementById('hub-balance').textContent = Number(data.new_balance || 0).toLocaleString();
+                loadStore();
+            } catch (e) {
+                toast(e.message || 'Error', true);
+            }
+        }
+
+        async function openBuyModal() {
+            const u = await apiFetch('/api/user').then(r => r.json());
+            if (!u.loggedIn) {
+                toast('Log in first', true);
+                return;
+            }
+            document.getElementById('buy-modal').classList.remove('hidden');
+            document.getElementById('buy-modal').classList.add('flex');
+            const res = await apiFetch('/api/gems/packs');
+            const data = await res.json();
+            const list = document.getElementById('pack-list');
+            if (!data.success || !data.packs || !data.packs.length) {
+                list.innerHTML = '<p class="text-gray-500 text-sm">Gem packs unavailable (check Stripe key).</p>';
+                return;
+            }
+            customMin = data.customMin || 100;
+            customMax = data.customMax || 100000;
+            pencePer100Gems = data.customPencePer100Gems != null ? data.customPencePer100Gems : 69;
+            document.getElementById('custom-gems-hint').textContent =
+                `${customMin.toLocaleString()}–${customMax.toLocaleString()} gems · ${data.symbol || '£'}${(pencePer100Gems / 100).toFixed(2)} per 100 gems`;
+            list.innerHTML = data.packs.map(p => `
+                <button type="button" onclick="buyPack('${p.id}')" class="w-full flex justify-between items-center legacy-card px-4 py-3 border border-white/10 hover:border-violet-500/45 text-left">
+                    <span><span class="font-bold text-white">${p.gems.toLocaleString()}</span> gems <span class="text-gray-500 text-xs">${p.badge ? '· ' + p.badge : ''}</span></span>
+                    <span class="text-violet-200 font-mono">${data.symbol}${p.price}</span>
+                </button>
+            `).join('');
+        }
+
+        function closeBuyModal() {
+            document.getElementById('buy-modal').classList.add('hidden');
+            document.getElementById('buy-modal').classList.remove('flex');
+        }
+
+        async function buyPack(packId) {
+            try {
+                const res = await apiFetch('/api/gems/buy', { method: 'POST', body: JSON.stringify({ packId }) });
+                const data = await res.json();
+                if (!data.success || !data.url) {
+                    toast(data.error || 'Checkout failed', true);
+                    return;
+                }
+                window.location.href = data.url;
+            } catch (e) {
+                toast(e.message || 'Error', true);
+            }
+        }
+
+        async function buyCustomGems() {
+            const v = document.getElementById('custom-gems-input').value;
+            try {
+                const res = await apiFetch('/api/gems/buy', { method: 'POST', body: JSON.stringify({ customGems: v }) });
+                const data = await res.json();
+                if (!data.success || !data.url) {
+                    toast(data.error || 'Checkout failed', true);
+                    return;
+                }
+                window.location.href = data.url;
+            } catch (e) {
+                toast(e.message || 'Error', true);
+            }
+        }
+
+        async function loadHistory() {
+            const el = document.getElementById('history-list');
+            el.innerHTML = '<p class="text-gray-500">Loading…</p>';
+            try {
+                const res = await apiFetch('/api/gems/history?limit=80');
+                const data = await res.json();
+                if (!data.success) throw new Error(data.error);
+                const rows = data.history || [];
+                if (!rows.length) {
+                    el.innerHTML = '<p class="text-gray-500">No transactions yet.</p>';
+                    return;
+                }
+                el.innerHTML = rows.map(h => {
+                    const sign = h.delta >= 0 ? '+' : '';
+                    const col = h.delta >= 0 ? 'text-fuchsia-400' : 'text-violet-300';
+                    return `<div class="legacy-card px-3 py-2 border border-white/5 flex justify-between gap-2">
+                        <span class="text-gray-400 truncate">${(h.description || h.type || '').slice(0, 80)}</span>
+                        <span class="${col} shrink-0">${sign}${h.delta}</span>
+                    </div>`;
+                }).join('');
+            } catch (e) {
+                el.innerHTML = '<p class="text-red-400">' + (e.message || 'Failed') + '</p>';
+            }
+        }
+
+        (function urlFlags() {
+            const p = new URLSearchParams(window.location.search);
+            const b = document.getElementById('gems-banner');
+            const e = document.getElementById('gems-error');
+            if (p.get('success') === '1') {
+                b.textContent = 'Payment complete — gems added to your account.';
+                b.classList.remove('hidden');
+            }
+            const err = p.get('error');
+            if (err) {
+                e.textContent = 'Something went wrong: ' + err.replace(/_/g, ' ');
+                e.classList.remove('hidden');
+            }
+        })();
+
+        async function loadGemEarnInfo() {
+            const el = document.getElementById('gem-earn-blurb');
+            if (!el) return;
+            try {
+                const res = await apiFetch('/api/gems/earning-rate');
+                const data = await parseJsonBody(res);
+                if (!data.success) throw new Error(data.error || 'Failed');
+                const base = data.gemsPerHour;
+                const bpr = data.bonusPerRank || 0;
+                const ro = data.ranksOwned;
+                const total = typeof data.gemsPerHourTotal === 'number' ? data.gemsPerHourTotal : base;
+                const track = data.playtimeTrackingActive ? 'RCON playtime tracking is active.' : 'Enable RCON stats (<code class="text-gray-500">6X_RCON_*</code> or <code class="text-gray-500">RCON_STATS_*</code>) so the server can see your playtime.';
+                const off = !data.earnEnabled ? ' (Playtime earning is turned off in env.)' : '';
+                let main;
+                if (bpr > 0) {
+                    if (ro != null && ro > 0) {
+                        main = `You earn <strong class="text-violet-200">${total} gems per hour</strong> (${base} base + ${ro} store rank(s) × ${bpr}) while your <strong class="text-violet-200">linked gamertag</strong> is on the server (tracked via playerlist).`;
+                    } else if (ro != null) {
+                        main = `You earn <strong class="text-violet-200">${total} gems per hour</strong> (${base} base; +${bpr} per hour for each store rank you own) while your <strong class="text-violet-200">linked gamertag</strong> is on the server.`;
+                    } else {
+                        main = `You earn <strong class="text-violet-200">${base} gems per hour</strong> base, plus <strong class="text-violet-200">${bpr} per hour per rank</strong> from the store (log in to see your total). While your <strong class="text-violet-200">linked gamertag</strong> is on the server, time is tracked via playerlist.`;
+                    }
+                } else {
+                    main = `You earn <strong class="text-violet-200">${total} gems per hour</strong> of in-game time while your <strong class="text-violet-200">linked gamertag</strong> is on the server (tracked via playerlist).`;
+                }
+                el.innerHTML = main + ' ' + track + off;
+            } catch (e) {
+                el.textContent =
+                    'Earn gems by playing on the server with your linked gamertag — base rate plus bonus per store rank when RCON stats are enabled.';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initAuthUi();
+            loadGemEarnInfo();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "scripts": {
+    "start": "node server.js",
+    "clear-data": "node scripts/clear-all-data.js"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "discord.js": "^14.25.1",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "passport": "^0.7.0",
+    "passport-discord": "^0.1.4",
+    "rustrcon": "^1.0.2",
+    "sqlite3": "^5.1.7",
+    "stripe": "^20.0.0"
+  }
+}

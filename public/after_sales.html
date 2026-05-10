@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Legacy Rust Servers | Payment Successful</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/legacy-theme.css">
+</head>
+<body>
+    <script src="/assets/legacy-navbar.js"></script>
+    <main class="legacy-page-wrap" style="max-width:50rem;">
+        <section class="legacy-card p-8 text-center">
+            <i class="fa-solid fa-check text-5xl mb-4" style="color:var(--ok)"></i>
+            <h1 class="legacy-heading text-5xl mb-3">Payment Authorized</h1>
+            <p class="text-gray-400 mb-6">Items are being delivered to your account.</p>
+            <div class="legacy-card p-4 mb-6 text-left">
+                <div class="mb-2">Connecting to server... <strong style="color:var(--ok)">OK</strong></div>
+                <div class="mb-2">Items delivered via RCON</div>
+                <div>If items do not appear after a few minutes, check your kits page.</div>
+            </div>
+            <div class="flex flex-wrap justify-center gap-2">
+                <a href="/" class="legacy-btn legacy-btn-primary">Back To Store</a>
+                <a href="/kits.html" class="legacy-btn">Open Kits</a>
+            </div>
+        </section>
+    </main>
+    <script>
+        localStorage.removeItem('legacy_rust_servers_cart');
+    </script>
+    <script src="/assets/legacy-footer.js"></script>
+</body>
+</html>

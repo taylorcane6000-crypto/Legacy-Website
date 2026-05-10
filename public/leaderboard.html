@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Legacy Rust Servers | Leaderboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/legacy-theme.css">
+    <style>
+        .legacy-podium { display: flex; justify-content: center; align-items: flex-end; gap: 1rem; flex-wrap: wrap; padding: 1.5rem 0; }
+        .legacy-podium-item { display: flex; flex-direction: column; align-items: center; max-width: 140px; }
+        .legacy-podium-bar { width: 5rem; border-radius: .5rem .5rem 0 0; display: flex; align-items: flex-end; justify-content: center; padding-bottom: .5rem; font-family: Orbitron, sans-serif; font-weight: 800; color: rgba(0,0,0,.5); }
+        .ring-gold { box-shadow: 0 0 0 3px #fbbf24, 0 0 20px rgba(251, 191, 36, .25); }
+        .ring-silver { box-shadow: 0 0 0 3px #9ca3af, 0 0 16px rgba(156, 163, 175, .2); }
+        .ring-bronze { box-shadow: 0 0 0 3px #b45309, 0 0 16px rgba(180, 83, 9, .2); }
+        .lb-row:hover { background: rgba(168, 85, 247, .06); }
+        .lb-tab { opacity: 0.85; }
+        .lb-tab.active { opacity: 1; border-color: #a855f7 !important; color: #c084fc !important; background: rgba(168, 85, 247, 0.12); }
+    </style>
+</head>
+<body>
+    <script src="/assets/legacy-navbar.js"></script>
+
+    <main class="legacy-page-wrap">
+        <header class="text-center mb-6">
+            <h1 class="legacy-heading text-4xl md:text-5xl mb-3"><i class="fa-solid fa-trophy text-[#c084fc] mr-2"></i>Leaderboard</h1>
+            <p class="text-gray-400 max-w-2xl mx-auto">Kills, playtime, deaths, and store spend. Search a gamertag to see combined stats.</p>
+        </header>
+
+        <div class="legacy-card p-5 mb-6">
+            <label class="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2 font-mono">Player search</label>
+            <div class="flex flex-col sm:flex-row gap-2">
+                <input id="player-search-input" type="text" autocomplete="off" placeholder="Gamertag"
+                    class="flex-1 min-w-0 bg-black/50 border border-white/15 rounded-lg px-3 py-2 text-white font-mono focus:outline-none focus:border-[#a855f7]/60">
+                <button type="button" id="player-search-btn" class="legacy-btn legacy-btn-primary shrink-0"><i class="fa-solid fa-magnifying-glass mr-1"></i>Search</button>
+            </div>
+            <div id="search-results" class="mt-4 hidden"></div>
+        </div>
+
+        <div class="flex flex-wrap gap-2 justify-center mb-6">
+            <button type="button" class="lb-tab legacy-btn active text-sm" data-type="kills"><i class="fa-solid fa-skull mr-1"></i>Top kills</button>
+            <button type="button" class="lb-tab legacy-btn text-sm" data-type="playtime"><i class="fa-solid fa-clock mr-1"></i>Top playtime</button>
+            <button type="button" class="lb-tab legacy-btn text-sm" data-type="deaths"><i class="fa-solid fa-skull-crossbones mr-1"></i>Top deaths</button>
+            <button type="button" class="lb-tab legacy-btn text-sm" data-type="spent"><i class="fa-solid fa-sterling-sign mr-1"></i>Top spent</button>
+        </div>
+
+        <div id="lb-loading" class="text-center py-16 text-gray-400">
+            <i class="fa-solid fa-spinner fa-spin text-3xl"></i>
+            <p class="mt-3 text-xs uppercase tracking-widest">Loading</p>
+        </div>
+
+        <div id="lb-content" class="hidden">
+            <div id="podium-wrap" class="legacy-card p-6 mb-8"></div>
+            <div class="legacy-card overflow-hidden">
+                <div class="px-5 py-4 border-b border-white/10 flex justify-between items-center flex-wrap gap-2">
+                    <h2 id="lb-table-title" class="legacy-heading text-lg">Rankings</h2>
+                    <span id="lb-count" class="text-gray-500 text-sm"></span>
+                </div>
+                <div id="lb-table" class="divide-y divide-white/5"></div>
+            </div>
+        </div>
+
+        <div id="lb-error" class="hidden text-center py-16 legacy-card border-red-500/30 max-w-xl mx-auto">
+            <i class="fa-solid fa-triangle-exclamation text-3xl text-red-400 mb-3"></i>
+            <p class="text-gray-400 mb-2">Could not load leaderboard.</p>
+            <p id="lb-error-detail" class="text-gray-500 text-xs font-mono break-words px-4"></p>
+        </div>
+    </main>
+
+    <script src="/assets/legacy-footer.js"></script>
+    <script>
+        let currentType = 'kills';
+
+        function escapeHtml(t) {
+            if (!t) return '';
+            const d = document.createElement('div');
+            d.textContent = t;
+            return d.innerHTML;
+        }
+
+        function podiumStat(p) {
+            if (currentType === 'spent') return '£' + (p.total_spend_gbp || '0.00');
+            if (currentType === 'playtime') return p.playtime_formatted || '0m';
+            if (currentType === 'deaths') return String(p.deaths ?? 0) + ' deaths';
+            return String(p.kills ?? 0) + ' kills';
+        }
+
+        function emptyPodiumMsg() {
+            if (currentType === 'spent') return 'No completed store orders yet.';
+            return 'No in-game stats yet — wire ingest or play on a linked server.';
+        }
+
+        function renderPodium(top) {
+            const el = document.getElementById('podium-wrap');
+            if (!top || top.length === 0) {
+                el.innerHTML = '<p class="text-center text-gray-500 py-8">' + emptyPodiumMsg() + '</p>';
+                return;
+            }
+            const n = Math.min(3, top.length);
+            let order, heights, rings, labels;
+            if (n === 1) {
+                order = [top[0]];
+                heights = ['h-28'];
+                rings = ['ring-gold'];
+                labels = ['1st'];
+            } else if (n === 2) {
+                order = [top[1], top[0]];
+                heights = ['h-16', 'h-28'];
+                rings = ['ring-silver', 'ring-gold'];
+                labels = ['2nd', '1st'];
+            } else {
+                order = [top[1], top[0], top[2]];
+                heights = ['h-16', 'h-28', 'h-12'];
+                rings = ['ring-silver', 'ring-gold', 'ring-bronze'];
+                labels = ['2nd', '1st', '3rd'];
+            }
+            let html = '<div class="legacy-podium">';
+            order.forEach((p, i) => {
+                if (!p) return;
+                const av = p.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png';
+                html += `
+                    <div class="legacy-podium-item">
+                        <div class="relative mb-3">
+                            <img src="${escapeHtml(av)}" alt="" width="80" height="80" class="w-20 h-20 rounded-full object-cover ${rings[i]}"
+                                onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+                            <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#a855f7] text-white">${labels[i]}</span>
+                        </div>
+                        <p class="font-bold text-white text-sm text-center truncate w-full" title="${escapeHtml(p.gamertag)}">${escapeHtml(p.gamertag)}</p>
+                        <p class="text-[#c084fc] font-bold text-lg mt-1 text-center">${escapeHtml(podiumStat(p))}</p>
+                        <div class="legacy-podium-bar ${heights[i]} w-20 mt-3 bg-white/10">${labels[i]}</div>
+                    </div>`;
+            });
+            html += '</div>';
+            el.innerHTML = html;
+        }
+
+        function renderTable(rows) {
+            const el = document.getElementById('lb-table');
+            if (!rows.length) {
+                el.innerHTML = '<div class="p-8 text-center text-gray-500">No entries.</div>';
+                return;
+            }
+            el.innerHTML = rows.map((p) => {
+                const av = p.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png';
+                const discName = p.discord_username || p.username || '';
+                const disc = discName ? `<span class="text-gray-500 text-xs"><i class="fa-brands fa-discord mr-1"></i>${escapeHtml(discName)}</span>` : '';
+
+                let right = '';
+                if (currentType === 'spent') {
+                    right = `<p class="font-bold text-white" style="font-family:Orbitron,sans-serif;">£${escapeHtml(p.total_spend_gbp)}</p>
+                        <p class="text-xs text-gray-500">${p.order_count} order${p.order_count !== 1 ? 's' : ''}</p>`;
+                } else if (currentType === 'playtime') {
+                    right = `<p class="font-bold text-white" style="font-family:Orbitron,sans-serif;">${escapeHtml(p.playtime_formatted)}</p>
+                        <p class="text-xs text-gray-500">${p.kills}K / ${p.deaths}D</p>`;
+                } else if (currentType === 'deaths') {
+                    right = `<p class="font-bold text-white" style="font-family:Orbitron,sans-serif;">${p.deaths}</p>
+                        <p class="text-xs text-gray-500">K/D ${p.kd_ratio}</p>`;
+                } else {
+                    right = `<p class="font-bold text-white" style="font-family:Orbitron,sans-serif;">${p.kills}</p>
+                        <p class="text-xs text-gray-500">${p.deaths} deaths · K/D ${p.kd_ratio}</p>`;
+                }
+
+                return `
+                    <div class="lb-row flex items-center gap-4 px-5 py-4 transition-colors">
+                        <span class="w-10 text-center font-bold ${p.rank <= 3 ? 'text-[#c084fc]' : 'text-gray-500'}" style="font-family:Orbitron,sans-serif;">#${p.rank}</span>
+                        <img src="${escapeHtml(av)}" alt="" width="40" height="40" class="w-10 h-10 rounded-full object-cover border border-white/10 shrink-0"
+                            onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+                        <div class="flex-1 min-w-0">
+                            <p class="font-bold text-white truncate">${escapeHtml(p.gamertag)}</p>
+                            ${disc}
+                        </div>
+                        <div class="text-right shrink-0">${right}</div>
+                    </div>`;
+            }).join('');
+        }
+
+        function setTab(type) {
+            currentType = type;
+            document.querySelectorAll('.lb-tab').forEach((b) => {
+                b.classList.toggle('active', b.getAttribute('data-type') === type);
+            });
+            const titles = { kills: 'Top kills', playtime: 'Top playtime', deaths: 'Top deaths', spent: 'Top store spend' };
+            document.getElementById('lb-table-title').textContent = titles[type] || 'Rankings';
+            loadLeaderboard();
+        }
+
+        function showLoadError(msg) {
+            document.getElementById('lb-loading').classList.add('hidden');
+            document.getElementById('lb-error').classList.remove('hidden');
+            const d = document.getElementById('lb-error-detail');
+            if (d) d.textContent = msg || '';
+        }
+
+        async function loadLeaderboard() {
+            const detail = document.getElementById('lb-error-detail');
+            if (detail) detail.textContent = '';
+            document.getElementById('lb-error').classList.add('hidden');
+            document.getElementById('lb-loading').classList.remove('hidden');
+            document.getElementById('lb-content').classList.add('hidden');
+            try {
+                const res = await fetch('/api/leaderboard?type=' + encodeURIComponent(currentType) + '&limit=50');
+                const text = await res.text();
+                let data;
+                try {
+                    data = text ? JSON.parse(text) : {};
+                } catch (parseErr) {
+                    showLoadError(
+                        'HTTP ' + res.status + ' — not JSON. Open from your Node server URL (e.g. http://localhost:' + (window.location.port || '3000') + ').'
+                    );
+                    return;
+                }
+                document.getElementById('lb-loading').classList.add('hidden');
+                if (!res.ok || !data.success) {
+                    showLoadError((data && data.error) || 'HTTP ' + res.status);
+                    return;
+                }
+                document.getElementById('lb-content').classList.remove('hidden');
+                const lb = data.leaderboard || [];
+                document.getElementById('lb-count').textContent = lb.length + ' ranked';
+                renderPodium(lb.slice(0, 3));
+                renderTable(lb);
+            } catch (e) {
+                console.error(e);
+                document.getElementById('lb-loading').classList.add('hidden');
+                showLoadError(e.message || 'Network error');
+            }
+        }
+
+        async function runPlayerSearch() {
+            const input = document.getElementById('player-search-input');
+            const wrap = document.getElementById('search-results');
+            const q = (input && input.value) ? input.value.trim() : '';
+            if (!q) {
+                wrap.classList.add('hidden');
+                return;
+            }
+            wrap.classList.remove('hidden');
+            wrap.innerHTML = '<p class="text-gray-500 text-sm"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading…</p>';
+            try {
+                const res = await fetch('/api/leaderboard/player?gamertag=' + encodeURIComponent(q));
+                const text = await res.text();
+                let data;
+                try {
+                    data = text ? JSON.parse(text) : {};
+                } catch (parseErr) {
+                    const hint404 = (res.status === 404 || /cannot get/i.test(text || ''))
+                        ? '<p class="text-gray-500 text-xs mt-2">This usually means the API route is missing on the running server. <strong class="text-gray-400">Restart Node</strong> (<code class="text-gray-400">npm start</code>) after pulling changes, and use the same URL/port the app prints (check your <code class="text-gray-400">PORT</code> in <code class="text-gray-400">.env</code>).</p>'
+                        : '<p class="text-gray-500 text-xs mt-2">Response was not JSON. Use the site URL from your running server, not a static copy of the HTML file.</p>';
+                    wrap.innerHTML = '<p class="text-red-400 text-sm">Search unavailable (HTTP ' + res.status + ').</p>' + hint404;
+                    return;
+                }
+                if (!data.success) {
+                    wrap.innerHTML = '<p class="text-red-400 text-sm">' + escapeHtml(data.error || 'Error') + '</p>';
+                    return;
+                }
+                if (!data.found) {
+                    wrap.innerHTML = '<p class="text-gray-500 text-sm">No stats or store link for <strong class="text-white">' + escapeHtml(q) + '</strong>. Check spelling or ingest data.</p>';
+                    return;
+                }
+                const t = data.totals || {};
+                const st = data.store || {};
+                const nem = data.nemesis || {};
+                const av = data.avatar_url || 'https://cdn.discordapp.com/embed/avatars/0.png';
+                let regionsHtml = '';
+                if (data.regions && data.regions.length) {
+                    regionsHtml = '<div class="mt-3 text-xs text-gray-500 font-mono">' +
+                        data.regions.map((r) => escapeHtml(r.region) + ': ' + r.total_kills + 'K / ' + r.total_deaths + 'D · ' + (r.playtime_formatted || '0m')).join('<br>') +
+                        '</div>';
+                }
+                wrap.innerHTML = `
+                    <div class="legacy-card p-4 border border-white/10" style="border-color: rgba(168, 85, 247, 0.25);">
+                        <div class="flex flex-col sm:flex-row gap-4 items-start">
+                            <img src="${escapeHtml(av)}" alt="" width="72" height="72" class="rounded-full border border-white/20 w-[72px] h-[72px] object-cover shrink-0"
+                                onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+                            <div class="flex-1 min-w-0">
+                                <h3 class="legacy-heading text-xl text-white mb-1">${escapeHtml(data.gamertag)}</h3>
+                                ${st.discord_username ? '<p class="text-gray-400 text-sm"><i class="fa-brands fa-discord mr-1"></i>' + escapeHtml(st.discord_username) + (st.linked ? ' <span class="text-emerald-500">(linked)</span>' : '') + '</p>' : ''}
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+                                    <div><div class="text-gray-500 text-[10px] uppercase">Kills</div><div class="text-lg font-bold text-red-400" style="font-family:Orbitron,sans-serif;">${t.kills ?? 0}</div></div>
+                                    <div><div class="text-gray-500 text-[10px] uppercase">Deaths</div><div class="text-lg font-bold text-gray-300" style="font-family:Orbitron,sans-serif;">${t.deaths ?? 0}</div></div>
+                                    <div><div class="text-gray-500 text-[10px] uppercase">K/D</div><div class="text-lg font-bold text-[#c084fc]" style="font-family:Orbitron,sans-serif;">${t.kd_ratio ?? 0}</div></div>
+                                    <div><div class="text-gray-500 text-[10px] uppercase">Playtime</div><div class="text-lg font-bold text-blue-400" style="font-family:Orbitron,sans-serif;">${escapeHtml(t.playtime_formatted || '0m')}</div></div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3 mt-3">
+                                    <div><div class="text-gray-500 text-[10px] uppercase">Store spend</div><div class="text-white font-bold">£${escapeHtml(st.total_spend_gbp || '0.00')}</div></div>
+                                    <div><div class="text-gray-500 text-[10px] uppercase">NPC kills</div><div class="text-white font-bold">${t.npc_kills ?? 0}</div></div>
+                                </div>
+                                ${nem.most_killed ? '<p class="text-xs text-gray-500 mt-2">Most killed: <span class="text-gray-300">' + escapeHtml(nem.most_killed.gamertag) + '</span> ×' + nem.most_killed.count + '</p>' : ''}
+                                ${nem.most_killed_by ? '<p class="text-xs text-gray-500">Nemesis: <span class="text-gray-300">' + escapeHtml(nem.most_killed_by.gamertag) + '</span> ×' + nem.most_killed_by.count + '</p>' : ''}
+                                ${regionsHtml}
+                            </div>
+                        </div>
+                    </div>`;
+            } catch (e) {
+                wrap.innerHTML = '<p class="text-red-400 text-sm">Search failed</p>';
+            }
+        }
+
+        document.querySelectorAll('.lb-tab').forEach((btn) => {
+            btn.addEventListener('click', () => setTab(btn.getAttribute('data-type')));
+        });
+        document.getElementById('player-search-btn').addEventListener('click', runPlayerSearch);
+        document.getElementById('player-search-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') runPlayerSearch();
+        });
+
+        loadLeaderboard();
+    </script>
+</body>
+</html>

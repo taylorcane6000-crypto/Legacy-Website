@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Legacy Rust Servers | Subscriptions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/legacy-theme.css">
+</head>
+<body>
+    <script src="/assets/legacy-navbar.js"></script>
+    <main class="legacy-page-wrap">
+        <div id="auth-loading" class="text-center py-16 text-gray-400">
+            <i class="fa-solid fa-spinner fa-spin text-3xl"></i>
+            <p class="mt-3 uppercase tracking-widest text-xs">Checking login</p>
+        </div>
+
+        <div id="login-required" class="hidden text-center py-16 legacy-card max-w-xl mx-auto" style="border-color: rgba(168, 85, 247, 0.35);">
+            <i class="fa-solid fa-lock text-4xl text-[#c084fc] mb-4"></i>
+            <h2 class="legacy-heading text-3xl mb-3">You Need To Log In</h2>
+            <p class="text-gray-400 mb-6">Sign in with Discord to view and manage your monthly subscriptions.</p>
+            <div class="flex flex-wrap justify-center gap-2">
+                <a href="/auth/discord" class="legacy-btn legacy-btn-primary text-decoration-none"><i class="fa-brands fa-discord mr-1"></i>Login with Discord</a>
+                <a href="/" class="legacy-btn text-decoration-none">Back to store</a>
+            </div>
+        </div>
+
+        <div id="subs-authed-wrap" class="hidden">
+            <header class="text-center mb-8">
+                <h1 class="legacy-heading text-5xl">Subscriptions</h1>
+                <p class="text-gray-400">Monthly plans for VIP Status and ranks. Cancel anytime; access continues until the end of the billing period.</p>
+            </header>
+
+            <div id="subs-toast" class="hidden max-w-xl mx-auto mb-6 legacy-card p-4 text-center" style="border-color: rgba(34, 197, 94, 0.4);"></div>
+
+            <div id="loading" class="text-center py-12 text-gray-400">
+                <i class="fa-solid fa-spinner fa-spin text-3xl"></i>
+                <p class="mt-3 uppercase tracking-widest text-xs">Loading subscriptions</p>
+            </div>
+
+            <div id="no-subscriptions" class="hidden text-center py-16 legacy-card max-w-xl mx-auto">
+                <i class="fa-solid fa-box-open text-4xl text-gray-600"></i>
+                <h3 class="text-2xl legacy-heading mt-4">No subscriptions yet</h3>
+                <p class="text-gray-400 mt-2">Subscribe from the store on VIP Status or any rank (monthly billing).</p>
+                <a href="/" class="legacy-btn legacy-btn-primary inline-block mt-4 text-decoration-none">Browse store</a>
+            </div>
+
+            <div id="subscriptions-container" class="hidden">
+                <div id="subscriptions-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+            </div>
+        </div>
+    </main>
+
+    <div id="cancel-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] hidden opacity-0 transition-opacity duration-200">
+        <div class="legacy-card p-6 max-w-md w-full mx-4" style="border-color: rgba(239, 68, 68, 0.35);">
+            <div class="text-center mb-6">
+                <i class="fa-solid fa-triangle-exclamation text-3xl text-red-400 mb-3"></i>
+                <h3 class="legacy-heading text-xl mb-2">Cancel subscription?</h3>
+                <p class="text-gray-400 text-sm" id="cancel-modal-text"></p>
+            </div>
+            <div class="flex gap-2">
+                <button type="button" class="legacy-btn flex-1" onclick="closeCancelModal()">Keep</button>
+                <button type="button" class="legacy-btn flex-1" style="background: rgba(220, 38, 38, 0.25); border-color: rgba(248, 113, 113, 0.5); color: #fecaca;" id="confirm-cancel-btn" onclick="confirmCancelSubscription()">Cancel plan</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/legacy-footer.js"></script>
+    <script>
+        let subscriptions = [];
+        let cancellingSubscriptionId = null;
+
+        function showToast(msg, isError) {
+            const el = document.getElementById('subs-toast');
+            el.textContent = msg;
+            el.classList.remove('hidden');
+            el.style.borderColor = isError ? 'rgba(239, 68, 68, 0.4)' : 'rgba(34, 197, 94, 0.4)';
+            el.style.color = isError ? '#fecaca' : '#bbf7d0';
+        }
+
+        function readQueryFlags() {
+            const q = new URLSearchParams(window.location.search);
+            if (q.get('success') === '1') {
+                showToast('Subscription active. Thank you!', false);
+                window.history.replaceState({}, '', '/subscriptions.html');
+            }
+            const err = q.get('error');
+            if (err) {
+                const map = {
+                    no_session: 'Checkout session missing. Try again from the store.',
+                    invalid_session: 'Invalid checkout session.',
+                    payment_failed: 'Payment was not completed.',
+                    no_subscription: 'No subscription was created.',
+                    bad_product: 'Product error — contact support.',
+                    callback_failed: 'Could not finish signup. Contact support if you were charged.',
+                    payments_disabled: 'Payments are not configured on this server.'
+                };
+                showToast(map[err] || 'Something went wrong.', true);
+                window.history.replaceState({}, '', '/subscriptions.html');
+            }
+        }
+
+        async function initPage() {
+            const authLoading = document.getElementById('auth-loading');
+            const loginRequired = document.getElementById('login-required');
+            const authed = document.getElementById('subs-authed-wrap');
+
+            try {
+                const r = await fetch('/api/user', { credentials: 'same-origin' });
+                const data = await r.json();
+                authLoading.classList.add('hidden');
+                if (!data.loggedIn) {
+                    loginRequired.classList.remove('hidden');
+                    return;
+                }
+                authed.classList.remove('hidden');
+                readQueryFlags();
+                await loadSubscriptions();
+            } catch (e) {
+                console.error(e);
+                authLoading.classList.add('hidden');
+                loginRequired.classList.remove('hidden');
+            }
+        }
+
+        async function loadSubscriptions() {
+            const loading = document.getElementById('loading');
+            const empty = document.getElementById('no-subscriptions');
+            const container = document.getElementById('subscriptions-container');
+            loading.classList.remove('hidden');
+            empty.classList.add('hidden');
+            container.classList.add('hidden');
+            try {
+                const res = await fetch('/api/subscriptions/list', { credentials: 'same-origin' });
+                const data = await res.json();
+                loading.classList.add('hidden');
+                if (!data.success || !data.subscriptions || data.subscriptions.length === 0) {
+                    empty.classList.remove('hidden');
+                    return;
+                }
+                subscriptions = data.subscriptions;
+                renderSubscriptions();
+                container.classList.remove('hidden');
+            } catch (e) {
+                console.error(e);
+                loading.classList.add('hidden');
+                empty.classList.remove('hidden');
+            }
+        }
+
+        function renderSubscriptions() {
+            const list = document.getElementById('subscriptions-list');
+            const currencySymbols = { gbp: '£', usd: '$', aud: 'A$', eur: '€' };
+            const statusColors = {
+                active: 'text-green-400 border-green-500/30 bg-green-500/10',
+                trialing: 'text-blue-400 border-blue-500/30 bg-blue-500/10',
+                past_due: 'text-amber-400 border-amber-500/30 bg-amber-500/10',
+                canceled: 'text-red-400 border-red-500/30 bg-red-500/10',
+                cancelled: 'text-red-400 border-red-500/30 bg-red-500/10'
+            };
+            const statusLabels = {
+                active: 'Active',
+                trialing: 'Trial',
+                past_due: 'Past due',
+                canceled: 'Cancelled',
+                cancelled: 'Cancelled'
+            };
+
+            list.innerHTML = subscriptions.map((sub) => {
+                const sym = currencySymbols[(sub.currency || 'gbp').toLowerCase()] || '£';
+                const amount = (sub.amount != null ? sub.amount : 0) / 100;
+                const nextBill = sub.current_period_end
+                    ? new Date(sub.current_period_end * 1000).toLocaleDateString()
+                    : '—';
+                const started = sub.created_at ? new Date(sub.created_at).toLocaleDateString() : '—';
+                const displayStatus =
+                    sub.status === 'active' && sub.cancel_at_period_end ? 'cancelling' : sub.status;
+                const statusClass = statusColors[sub.status] || 'text-gray-400 border-gray-500/30 bg-gray-500/10';
+                const statusLabel =
+                    displayStatus === 'cancelling'
+                        ? 'Cancelling'
+                        : statusLabels[sub.status] || sub.status;
+
+                let actions = '';
+                if (sub.status === 'canceled' || sub.status === 'cancelled') {
+                    actions = '<p class="text-gray-500 text-sm text-center py-2">Ended</p>';
+                } else if (sub.cancel_at_period_end) {
+                    actions =
+                        '<p class="text-amber-400 text-sm text-center py-2"><i class="fa-solid fa-clock mr-1"></i>Ends ' +
+                        nextBill +
+                        '</p>';
+                } else if (['active', 'trialing', 'past_due'].includes(sub.status)) {
+                    actions =
+                        '<button type="button" class="legacy-btn w-full mt-2" style="background: rgba(220, 38, 38, 0.2); border-color: rgba(248, 113, 113, 0.4); color: #fecaca;" data-sub-id="' +
+                        sub.stripe_subscription_id +
+                        '">Cancel at period end</button>';
+                }
+
+                return (
+                    '<article class="legacy-card p-5">' +
+                    '<div class="flex justify-between items-start gap-2 mb-3">' +
+                    '<h3 class="legacy-heading text-lg leading-tight">' +
+                    (sub.product_name || sub.product_id) +
+                    '</h3>' +
+                    '<span class="text-xs font-bold px-2 py-1 rounded border ' +
+                    statusClass +
+                    '">' +
+                    statusLabel +
+                    '</span>' +
+                    '</div>' +
+                    '<p class="text-2xl font-bold text-[#c084fc]">' +
+                    sym +
+                    amount.toFixed(2) +
+                    '<span class="text-gray-500 text-base font-normal">/' +
+                    (sub.interval || 'month') +
+                    '</span></p>' +
+                    '<dl class="mt-4 space-y-1 text-sm text-gray-400">' +
+                    '<div class="flex justify-between"><dt>Next billing</dt><dd class="text-white">' +
+                    nextBill +
+                    '</dd></div>' +
+                    '<div class="flex justify-between"><dt>Started</dt><dd class="text-white">' +
+                    started +
+                    '</dd></div>' +
+                    '</dl>' +
+                    actions +
+                    '</article>'
+                );
+            }).join('');
+
+            list.querySelectorAll('[data-sub-id]').forEach((btn) => {
+                btn.addEventListener('click', () => openCancelModal(btn.getAttribute('data-sub-id')));
+            });
+        }
+
+        function openCancelModal(subscriptionId) {
+            cancellingSubscriptionId = subscriptionId;
+            const sub = subscriptions.find((s) => s.stripe_subscription_id === subscriptionId);
+            const name = sub ? sub.product_name || sub.product_id : 'this plan';
+            document.getElementById('cancel-modal-text').textContent =
+                'Cancel ' +
+                name +
+                '? You keep access until ' +
+                (sub && sub.current_period_end
+                    ? new Date(sub.current_period_end * 1000).toLocaleDateString()
+                    : 'the end of the billing period') +
+                '.';
+            const modal = document.getElementById('cancel-modal');
+            modal.classList.remove('hidden');
+            requestAnimationFrame(() => modal.classList.remove('opacity-0'));
+        }
+
+        function closeCancelModal() {
+            const modal = document.getElementById('cancel-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                cancellingSubscriptionId = null;
+            }, 200);
+        }
+
+        async function confirmCancelSubscription() {
+            if (!cancellingSubscriptionId) return;
+            const btn = document.getElementById('confirm-cancel-btn');
+            btn.disabled = true;
+            const prev = btn.textContent;
+            btn.textContent = 'Working…';
+            try {
+                const res = await fetch('/api/subscriptions/cancel', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ subscriptionId: cancellingSubscriptionId })
+                });
+                const data = await res.json();
+                if (!data.success) throw new Error(data.error || 'Cancel failed');
+                closeCancelModal();
+                showToast(data.message || 'Subscription updated.', false);
+                await loadSubscriptions();
+            } catch (e) {
+                showToast(e.message || 'Cancel failed', true);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = prev;
+            }
+        }
+
+        initPage();
+    </script>
+</body>
+</html>

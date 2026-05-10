@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Legacy Rust Servers | Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/legacy-theme.css">
+</head>
+<body>
+    <script src="/assets/legacy-navbar.js"></script>
+
+    <main class="legacy-page-wrap">
+        <div id="auth-loading" class="text-center py-16 text-gray-400">
+            <i class="fa-solid fa-spinner fa-spin text-3xl"></i>
+            <p class="mt-3 uppercase tracking-widest text-xs">Checking login</p>
+        </div>
+
+        <div id="login-required" class="hidden text-center py-16 legacy-card max-w-xl mx-auto" style="border-color: rgba(168, 85, 247, 0.35);">
+            <i class="fa-solid fa-lock text-4xl text-[#c084fc] mb-4"></i>
+            <h2 class="legacy-heading text-3xl mb-3">You Need To Log In</h2>
+            <p class="text-gray-400 mb-6">Sign in with Discord to view your profile and account details.</p>
+            <div class="flex flex-wrap justify-center gap-2">
+                <a href="/auth/discord" class="legacy-btn legacy-btn-primary text-decoration-none"><i class="fa-brands fa-discord mr-1"></i>Login with Discord</a>
+                <a href="/" class="legacy-btn text-decoration-none">Back to store</a>
+            </div>
+        </div>
+
+        <div id="profile-authed-wrap" class="hidden">
+        <section class="legacy-card p-6 mb-6">
+            <div class="flex items-center gap-4">
+                <img id="pfp" src="" class="w-20 h-20 rounded-full border border-white/20 object-cover">
+                <div>
+                    <h1 id="gamertag" class="legacy-heading text-4xl">Loading...</h1>
+                    <p class="text-gray-400"><i class="fa-brands fa-discord mr-1"></i><span id="discord-name">@user</span></p>
+                </div>
+            </div>
+        </section>
+
+        <section class="legacy-card p-6 mb-6">
+            <h2 class="legacy-heading text-2xl mb-4">Account Info</h2>
+            <div class="legacy-grid cols-2">
+                <div><div class="text-gray-500 text-xs uppercase">Email</div><div id="email">...</div></div>
+                <div><div class="text-gray-500 text-xs uppercase">Member Since</div><div id="join-date">...</div></div>
+                <div><div class="text-gray-500 text-xs uppercase">Platform</div><div id="console-badge">PC</div></div>
+                <div><div class="text-gray-500 text-xs uppercase">Store credit</div><div id="store-credit" class="text-emerald-400 font-mono">£0.00</div></div>
+                <div><div class="text-gray-500 text-xs uppercase">Gems</div><div id="gem-balance" class="text-violet-300 font-mono"><i class="fa-solid fa-gem mr-1 text-fuchsia-400"></i>0</div></div>
+            </div>
+        </section>
+
+        <div class="flex flex-wrap gap-2">
+            <a href="/purchase-history.html" class="legacy-btn legacy-btn-primary text-decoration-none"><i class="fa-solid fa-receipt mr-1"></i>Purchase History</a>
+            <a href="/subscriptions.html" class="legacy-btn text-decoration-none"><i class="fa-solid fa-rotate mr-1"></i>Subscriptions</a>
+            <a href="/logout" class="legacy-btn"><i class="fa-solid fa-power-off mr-1"></i>Logout</a>
+        </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const authLoadingEl = document.getElementById('auth-loading');
+            const loginRequiredEl = document.getElementById('login-required');
+            const authedWrapEl = document.getElementById('profile-authed-wrap');
+            try {
+                const res = await fetch('/api/user', { credentials: 'same-origin' });
+                const data = await res.json();
+                authLoadingEl.classList.add('hidden');
+                if (!data.loggedIn || !data.user) {
+                    loginRequiredEl.classList.remove('hidden');
+                    return;
+                }
+                authedWrapEl.classList.remove('hidden');
+                const u = data.user;
+                document.getElementById('pfp').src = u.pfp || 'https://ui-avatars.com/api/?name=User';
+                document.getElementById('gamertag').innerText = (u.gamertag || u.username || 'Unknown').toUpperCase();
+                document.getElementById('discord-name').innerText = u.username || '@unknown';
+                document.getElementById('email').innerText = u.email || 'N/A';
+                document.getElementById('console-badge').innerText = u.console || 'PC';
+                const scPence = u.store_credit_pence != null ? Number(u.store_credit_pence) : 0;
+                document.getElementById('store-credit').innerText = '£' + (Math.max(0, scPence) / 100).toFixed(2);
+                const gems = u.gems != null ? Number(u.gems) : 0;
+                document.getElementById('gem-balance').innerHTML =
+                    '<i class="fa-solid fa-gem mr-1"></i>' + Math.max(0, gems).toLocaleString();
+                const rawJoinDate = u.registered_at || u.registeredAt;
+                const joinDate = rawJoinDate ? new Date(rawJoinDate) : null;
+                document.getElementById('join-date').innerText = (joinDate && !Number.isNaN(joinDate.getTime()))
+                    ? joinDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+                    : 'Unknown';
+            } catch (e) {
+                console.error(e);
+                authLoadingEl.classList.add('hidden');
+                loginRequiredEl.classList.remove('hidden');
+            }
+        });
+    </script>
+    <script src="/assets/legacy-footer.js"></script>
+</body>
+</html>

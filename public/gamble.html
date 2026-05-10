@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Legacy Rust | Gem Casino</title>
+    <style>html, body { background: #0a0a0a !important; color: #fff; margin: 0; padding: 0; }</style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#a855f7',
+                        hover: '#c084fc',
+                        card: '#121214',
+                        border: '#232326',
+                        dark: '#161616',
+                        'roulette-red': '#e74c3c',
+                        'roulette-black': '#2c3e50',
+                        'roulette-green': '#27ae60'
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        'space-mono': ['Space Mono', 'monospace']
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="stylesheet" href="/assets/legacy-theme.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js"></script>
+    <style>
+        body {
+            background: radial-gradient(ellipse 120% 85% at 50% -15%, rgba(139, 92, 246, 0.14), transparent 52%), #0a0a0a;
+            min-height: 100vh;
+            min-height: 100dvh;
+            -webkit-tap-highlight-color: rgba(168, 85, 247, 0.15);
+        }
+
+        .hero-title-gradient {
+            background: linear-gradient(45deg, #e9d5ff, #c084fc, #a855f7, #d946ef, #c084fc);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in-up { animation: fadeInUp 0.4s ease-out forwards; opacity: 0; }
+
+        .tab-active {
+            background: linear-gradient(145deg, #a855f7, #7c3aed) !important;
+            color: #faf5ff !important;
+            font-weight: 700;
+            box-shadow: 0 0 0 1px rgba(192, 132, 252, 0.35), 0 6px 20px -6px rgba(88, 28, 135, 0.45);
+        }
+
+        /* Card Styles */
+        .playing-card {
+            width: 60px;
+            height: 84px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        .playing-card.red { color: #e74c3c; }
+        .playing-card.black { color: #2c3e50; }
+        .playing-card.hidden { background: linear-gradient(135deg, #1a1a2e 25%, #16213e 75%); }
+
+        @keyframes dealCard {
+            from { transform: translateY(-50px) rotate(-10deg); opacity: 0; }
+            to { transform: translateY(0) rotate(0); opacity: 1; }
+        }
+        .deal-animation { animation: dealCard 0.3s ease-out; }
+
+        /* Plinko Styles */
+        #plinko-canvas-container {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+        #plinko-canvas-container canvas {
+            display: block;
+            width: 100% !important;
+            height: auto !important;
+        }
+        .plinko-slot-row {
+            display: flex;
+            gap: 3px;
+            justify-content: center;
+            padding: 0 4px;
+        }
+        .plinko-slot {
+            flex: 1;
+            text-align: center;
+            padding: 6px 2px;
+            font-size: 10px;
+            font-weight: bold;
+            border-radius: 4px;
+            white-space: nowrap;
+            min-width: 0;
+            transition: transform 0.15s, box-shadow 0.15s;
+            position: relative;
+            overflow: hidden;
+        }
+        .plinko-slot.hit {
+            animation: slotHit 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes slotHit {
+            0% { transform: scale(1); }
+            40% { transform: scale(1.25); }
+            100% { transform: scale(1); }
+        }
+        .plinko-slot.glow::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: inherit;
+            animation: slotGlow 0.6s ease-out forwards;
+        }
+        @keyframes slotGlow {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        /* Plinko risk buttons */
+        .plinko-risk-btn {
+            transition: all 0.15s;
+        }
+        .plinko-risk-btn.active {
+            background: linear-gradient(145deg, #7c3aed, #a855f7) !important;
+            color: #faf5ff !important;
+            font-weight: 700;
+            border-color: #c084fc !important;
+        }
+        /* Plinko range slider */
+        #plinko-rows-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            outline: none;
+        }
+        #plinko-rows-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #a855f7;
+            cursor: pointer;
+            border: 2px solid #e9d5ff;
+            box-shadow: 0 1px 4px rgba(88, 28, 135, 0.5);
+        }
+        #plinko-rows-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #a855f7;
+            cursor: pointer;
+            border: 2px solid #e9d5ff;
+            box-shadow: 0 1px 4px rgba(88, 28, 135, 0.5);
+        }
+        /* Plinko mode toggle */
+        .plinko-mode-btn.active-mode {
+            background: #1a1a1a;
+            color: #fff;
+        }
+        /* Plinko bet input group */
+        .plinko-bet-group {
+            display: flex;
+            align-items: stretch;
+            background: #0a0a0a;
+            border: 2px solid #1f1f1f;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .plinko-bet-group:focus-within { border-color: #a855f7; box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.25); }
+        .plinko-bet-group input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 14px;
+            padding: 8px 10px;
+            font-weight: 600;
+            font-family: 'Space Mono', monospace;
+        }
+        .plinko-bet-group button {
+            padding: 0 10px;
+            background: #1f1f1f;
+            color: #888;
+            font-weight: 700;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .plinko-bet-group button:hover { background: #333; }
+        /* Auto-bet pulse */
+        @keyframes autoPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.45); }
+            50% { box-shadow: 0 0 0 8px rgba(168, 85, 247, 0); }
+        }
+        .auto-active { animation: autoPulse 2s infinite; }
+        /* Plinko result chips */
+        .plinko-result-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 7px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        /* Fairness modal */
+        .plinko-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        .plinko-modal-overlay.open { opacity: 1; pointer-events: all; }
+        .plinko-modal-box {
+            background: #111;
+            border: 1px solid #1f1f1f;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 480px;
+            width: 90%;
+        }
+
+        /* Roulette Styles */
+        .roulette-number {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .roulette-number:hover { transform: scale(1.1); }
+        .roulette-number.red { background: #e74c3c; }
+        .roulette-number.black { background: #2c3e50; }
+        .roulette-number.green { background: #27ae60; }
+        .roulette-number.selected { box-shadow: 0 0 0 3px #c084fc, 0 0 14px rgba(168, 85, 247, 0.35); }
+
+        /* Roulette wheel: rim spins; hub + result stay fixed (readable digits) */
+        .roulette-wheel-ui {
+            position: relative;
+            width: min(12rem, 76vw);
+            height: min(12rem, 76vw);
+            max-width: 220px;
+            max-height: 220px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 1.5rem;
+        }
+        .roulette-wheel-pointer {
+            position: absolute;
+            top: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 6;
+            width: 0;
+            height: 0;
+            border-left: 11px solid transparent;
+            border-right: 11px solid transparent;
+            border-top: 16px solid #e879f9;
+            filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.5));
+        }
+        .roulette-wheel-rim-wrap {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow:
+                0 6px 28px rgba(0, 0, 0, 0.55),
+                inset 0 0 0 5px rgba(168, 85, 247, 0.45),
+                inset 0 0 0 8px rgba(15, 15, 18, 0.9);
+        }
+        .roulette-wheel-rim {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            /* ~37 pockets: alternating red / dark (simplified wheel) */
+            background: repeating-conic-gradient(
+                from -90deg,
+                #c62828 0deg 9.72973deg,
+                #1b2838 9.72973deg 19.45946deg
+            );
+            transform-origin: 50% 50%;
+        }
+        .roulette-wheel-hub {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 44%;
+            height: 44%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 32% 28%, #35353a 0%, #121214 55%, #0a0a0c 100%);
+            border: 3px solid rgba(168, 85, 247, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 4;
+            box-shadow:
+                0 2px 14px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
+        .roulette-result-num {
+            font-family: "Space Mono", ui-monospace, monospace;
+            font-size: clamp(1.35rem, 8vw, 2rem);
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            color: #f4f4f5;
+            line-height: 1;
+            letter-spacing: 0.02em;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+        }
+        @keyframes roulette-rim-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #roulette-wheel.spinning .roulette-wheel-rim {
+            animation: roulette-rim-spin 1.1s linear infinite;
+        }
+
+        /* Live Players */
+        .live-player {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(139, 92, 246, 0.12);
+            border-radius: 8px;
+            border: 1px solid rgba(168, 85, 247, 0.28);
+        }
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #27ae60;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            left: max(12px, env(safe-area-inset-left));
+            right: max(12px, env(safe-area-inset-right));
+            bottom: max(16px, env(safe-area-inset-bottom));
+            max-width: 22rem;
+            margin: 0 auto;
+            padding: 12px 18px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: white;
+            transform: translateY(120%);
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+        .toast.show { transform: translateY(0); }
+        .toast.error { border-color: #e74c3c; }
+        .toast.success { border-color: rgba(192, 132, 252, 0.75); }
+    </style>
+</head>
+<body class="text-white font-space-mono">
+    <script src="/assets/legacy-navbar.js"></script>
+
+    <!-- Casino Toolbar -->
+    <div class="bg-card border-b border-border">
+        <div class="container mx-auto px-3 sm:px-4 py-2 flex flex-wrap justify-between items-center gap-2" style="padding-left:max(0.75rem, env(safe-area-inset-left));padding-right:max(0.75rem, env(safe-area-inset-right));">
+            <div class="flex items-center gap-2 min-w-0">
+                <i class="fas fa-dice text-primary shrink-0"></i>
+                <span class="font-orbitron text-xs sm:text-sm font-bold text-primary uppercase truncate">Gem Casino</span>
+            </div>
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap justify-end">
+                <span id="user-name" class="text-gray-500 text-xs max-w-[100px] sm:max-w-[140px] truncate hidden sm:inline"></span>
+                <a href="/gems" class="text-xs text-violet-400 hover:text-violet-200 uppercase font-orbitron whitespace-nowrap min-h-[44px] inline-flex items-center px-1 touch-manipulation">Gem store</a>
+                <div class="bg-black/40 px-2 sm:px-3 py-1.5 rounded-lg flex items-center gap-2 min-h-[44px]">
+                    <i class="fas fa-gem text-primary text-sm"></i>
+                    <span id="gem-balance" class="font-bold text-primary text-sm tabular-nums">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="container mx-auto px-3 sm:px-4 py-4 sm:py-6 pb-8" style="padding-left:max(0.75rem, env(safe-area-inset-left));padding-right:max(0.75rem, env(safe-area-inset-right));">
+        <!-- Game Tabs -->
+        <div class="flex flex-wrap gap-2 mb-5 sm:mb-6 justify-center">
+            <button type="button" onclick="showGame('blackjack')" id="tab-blackjack" class="tab-active min-h-[48px] px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-orbitron text-xs sm:text-sm uppercase bg-white/5 text-gray-400 hover:text-white transition-colors touch-manipulation flex-1 sm:flex-none min-w-[7rem] max-w-[14rem]">
+                <i class="fas fa-cards mr-1 sm:mr-2"></i>Blackjack
+            </button>
+            <button type="button" onclick="showGame('plinko')" id="tab-plinko" class="min-h-[48px] px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-orbitron text-xs sm:text-sm uppercase bg-white/5 text-gray-400 hover:text-white transition-colors touch-manipulation flex-1 sm:flex-none min-w-[7rem] max-w-[14rem]">
+                <i class="fas fa-circle mr-1 sm:mr-2"></i>Plinko
+            </button>
+            <button type="button" onclick="showGame('roulette')" id="tab-roulette" class="min-h-[48px] px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-orbitron text-xs sm:text-sm uppercase bg-white/5 text-gray-400 hover:text-white transition-colors touch-manipulation flex-1 sm:flex-none min-w-[7rem] max-w-[14rem]">
+                <i class="fas fa-dharmachakra mr-1 sm:mr-2"></i>Roulette
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Main Game Area -->
+            <div class="lg:col-span-3">
+                <!-- BLACKJACK -->
+                <div id="game-blackjack" class="bg-card border border-border rounded-xl p-4 sm:p-6">
+                    <div class="text-center mb-6">
+                        <h2 class="font-orbitron text-2xl mb-2">BLACKJACK</h2>
+                        <p class="text-gray-500 text-sm">Get closer to 21 than the dealer without going over. Ties push (bet returned).</p>
+                    </div>
+
+                    <!-- Dealer Hand -->
+                    <div class="mb-8">
+                        <div class="text-gray-400 text-sm mb-2">DEALER <span id="dealer-value" class="text-white font-bold"></span></div>
+                        <div id="dealer-cards" class="flex gap-2 justify-center min-h-[84px]">
+                            <!-- Cards rendered here -->
+                        </div>
+                    </div>
+
+                    <!-- Player Hand -->
+                    <div class="mb-8">
+                        <div class="text-gray-400 text-sm mb-2">YOUR HAND <span id="player-value" class="text-primary font-bold"></span></div>
+                        <div id="player-cards" class="flex gap-2 justify-center min-h-[84px]">
+                            <!-- Cards rendered here -->
+                        </div>
+                    </div>
+
+                    <!-- Game Result -->
+                    <div id="bj-result" class="text-center mb-6 hidden">
+                        <div id="bj-result-text" class="text-2xl font-orbitron mb-2"></div>
+                        <div id="bj-win-amount" class="text-primary"></div>
+                    </div>
+
+                    <!-- Controls -->
+                    <div id="bj-betting" class="text-center">
+                        <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mb-4">
+                            <button type="button" onclick="adjustBjBet(-50)" class="min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 touch-manipulation text-sm">-50</button>
+                            <button type="button" onclick="adjustBjBet(-10)" class="min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 touch-manipulation text-sm">-10</button>
+                            <div class="bg-black/40 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg min-h-[44px] flex items-center">
+                                <span class="text-gray-400 text-sm">Bet:</span>
+                                <span id="bj-bet" class="text-primary font-bold ml-2">50</span>
+                                <i class="fas fa-gem text-primary ml-1"></i>
+                            </div>
+                            <button type="button" onclick="adjustBjBet(10)" class="min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 touch-manipulation text-sm">+10</button>
+                            <button type="button" onclick="adjustBjBet(50)" class="min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 touch-manipulation text-sm">+50</button>
+                        </div>
+                        <button type="button" onclick="startBlackjack()" class="w-full sm:w-auto min-h-[48px] px-8 py-3 bg-primary text-black font-orbitron font-bold rounded-lg hover:bg-hover transition-colors touch-manipulation">
+                            DEAL
+                        </button>
+                    </div>
+
+                    <div id="bj-actions" class="flex flex-col sm:flex-row justify-stretch sm:justify-center gap-3 hidden max-w-md mx-auto">
+                        <button type="button" onclick="blackjackHit()" class="min-h-[48px] px-6 py-3 bg-violet-600 hover:bg-violet-700 font-orbitron rounded-lg touch-manipulation sm:flex-1">HIT</button>
+                        <button type="button" onclick="blackjackStand()" class="min-h-[48px] px-6 py-3 bg-red-600 hover:bg-red-700 font-orbitron rounded-lg touch-manipulation sm:flex-1">STAND</button>
+                        <button type="button" id="bj-double-btn" onclick="blackjackDouble()" class="min-h-[48px] px-6 py-3 bg-purple-600 hover:bg-purple-700 font-orbitron rounded-lg touch-manipulation sm:flex-1">DOUBLE</button>
+                    </div>
+
+                    <div id="bj-new-game" class="text-center hidden">
+                        <button type="button" onclick="resetBlackjack()" class="w-full sm:w-auto min-h-[48px] px-8 py-3 bg-primary text-black font-orbitron font-bold rounded-lg hover:bg-hover transition-colors touch-manipulation">
+                            NEW GAME
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PLINKO (Enhanced) -->
+                <div id="game-plinko" class="hidden">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <!-- Plinko Controls Panel -->
+                        <div class="w-full md:w-64 shrink-0 order-2 md:order-1">
+                            <div class="bg-card border border-border rounded-xl p-4 space-y-4">
+                                <!-- Manual / Auto Toggle -->
+                                <div class="flex rounded-full overflow-hidden bg-dark border border-border">
+                                    <button id="plinko-mode-manual" onclick="setPlinkoMode('manual')" class="plinko-mode-btn active-mode flex-1 py-2 text-xs font-bold text-center">Manual</button>
+                                    <button id="plinko-mode-auto" onclick="setPlinkoMode('auto')" class="plinko-mode-btn flex-1 py-2 text-xs font-bold text-center text-gray-500">Auto</button>
+                                </div>
+
+                                <!-- Bet Amount -->
+                                <div>
+                                    <label class="text-gray-500 text-xs font-bold mb-1.5 block uppercase tracking-wider">Bet Amount</label>
+                                    <div class="plinko-bet-group">
+                                        <i class="fas fa-gem text-primary flex items-center pl-2.5 text-xs"></i>
+                                        <input type="number" id="plinko-bet-input" value="50" min="10" max="500" step="10">
+                                        <button onclick="plinkoHalfBet()">&#189;</button>
+                                        <button onclick="plinkoDoubleBet()">2x</button>
+                                    </div>
+                                </div>
+
+                                <!-- Risk -->
+                                <div>
+                                    <label class="text-gray-500 text-xs font-bold mb-1.5 block uppercase tracking-wider">Risk</label>
+                                    <div class="flex gap-2">
+                                        <button onclick="setPlinkoRisk('low')" class="plinko-risk-btn flex-1 py-2 rounded-md text-xs bg-dark border border-border text-gray-500 hover:text-white">Low</button>
+                                        <button onclick="setPlinkoRisk('medium')" class="plinko-risk-btn flex-1 py-2 rounded-md text-xs active">Medium</button>
+                                        <button onclick="setPlinkoRisk('high')" class="plinko-risk-btn flex-1 py-2 rounded-md text-xs bg-dark border border-border text-gray-500 hover:text-white">High</button>
+                                    </div>
+                                </div>
+
+                                <!-- Rows -->
+                                <div>
+                                    <div class="flex justify-between items-center mb-1.5">
+                                        <label class="text-gray-500 text-xs font-bold uppercase tracking-wider">Rows</label>
+                                        <span id="plinko-rows-value" class="text-white font-bold text-sm">16</span>
+                                    </div>
+                                    <input type="range" id="plinko-rows-slider" min="8" max="16" value="16" oninput="setPlinkoRows(this.value)">
+                                </div>
+
+                                <!-- Auto Bet Settings -->
+                                <div id="plinko-auto-settings" class="hidden space-y-3">
+                                    <div>
+                                        <label class="text-gray-500 text-xs font-bold mb-1 block uppercase tracking-wider">Number of Bets</label>
+                                        <div class="plinko-bet-group">
+                                            <input type="number" id="plinko-auto-count" value="10" min="1" max="100">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="text-gray-500 text-xs font-bold mb-1 block uppercase tracking-wider">Speed (ms)</label>
+                                        <div class="plinko-bet-group">
+                                            <input type="number" id="plinko-auto-speed" value="1000" min="500" max="5000" step="100">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Play Button -->
+                                <button id="plinko-play-btn" onclick="handlePlinkoPlay()" class="w-full py-3 rounded-lg font-orbitron font-bold text-sm text-black bg-primary hover:bg-hover transition-colors uppercase tracking-wider">
+                                    DROP BALL
+                                </button>
+
+                                <!-- Client Seed -->
+                                <div>
+                                    <label class="text-gray-500 text-xs font-bold mb-1 block uppercase tracking-wider">Client Seed</label>
+                                    <div class="plinko-bet-group">
+                                        <input type="text" id="plinko-client-seed" value="" placeholder="Enter seed..." class="text-xs">
+                                        <button onclick="plinkoRandomizeSeed()" title="Randomize"><i class="fas fa-rotate text-xs"></i></button>
+                                    </div>
+                                </div>
+
+                                <!-- Provably Fair link -->
+                                <div class="pt-2 border-t border-border">
+                                    <button onclick="openPlinkoFairness()" class="flex items-center gap-2 text-gray-600 hover:text-gray-400 text-xs transition-colors">
+                                        <i class="fas fa-shield-halved"></i>
+                                        <span>Provably Fair</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Recent Results -->
+                            <div class="bg-card border border-border rounded-xl p-3 mt-3">
+                                <h4 class="text-gray-500 text-xs font-bold mb-2 uppercase tracking-wider">Recent</h4>
+                                <div id="plinko-recent" class="flex flex-wrap gap-1 max-h-24 overflow-y-auto">
+                                    <span class="text-gray-600 text-xs">No results yet</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Plinko Game Canvas -->
+                        <div class="flex-1 order-1 md:order-2">
+                            <div class="bg-card border border-border rounded-xl overflow-hidden">
+                                <div id="plinko-canvas-container"></div>
+                                <div id="plinko-slots" class="plinko-slot-row pb-3 pt-0"></div>
+                            </div>
+                            <!-- Profit -->
+                            <div class="bg-card border border-border rounded-xl p-3 mt-3 flex items-center justify-between">
+                                <span class="text-gray-500 text-sm">Total Profit</span>
+                                <span id="plinko-total-profit" class="font-bold text-sm text-white">0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plinko Fairness Modal -->
+                <div id="plinko-fairness-modal" class="plinko-modal-overlay" onclick="if(event.target===this)closePlinkoFairness()">
+                    <div class="plinko-modal-box">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="font-orbitron font-bold text-lg">Provably Fair</h2>
+                            <button onclick="closePlinkoFairness()" class="text-gray-600 hover:text-white text-xl">&times;</button>
+                        </div>
+                        <div class="space-y-3 text-sm">
+                            <div>
+                                <label class="text-gray-500 text-xs font-bold mb-1 block">Server Seed (Hashed)</label>
+                                <div class="bg-dark rounded-md p-2.5 text-gray-500 break-all text-xs font-space-mono" id="plinko-fair-hash">—</div>
+                            </div>
+                            <div>
+                                <label class="text-gray-500 text-xs font-bold mb-1 block">Server Seed (Revealed)</label>
+                                <div class="bg-dark rounded-md p-2.5 text-gray-500 break-all text-xs font-space-mono" id="plinko-fair-seed">—</div>
+                            </div>
+                            <div>
+                                <label class="text-gray-500 text-xs font-bold mb-1 block">Client Seed</label>
+                                <div class="bg-dark rounded-md p-2.5 text-gray-500 break-all text-xs font-space-mono" id="plinko-fair-client">—</div>
+                            </div>
+                            <div>
+                                <label class="text-gray-500 text-xs font-bold mb-1 block">Nonce</label>
+                                <div class="bg-dark rounded-md p-2.5 text-gray-500 break-all text-xs font-space-mono" id="plinko-fair-nonce">—</div>
+                            </div>
+                            <p class="text-gray-600 text-xs mt-3">The server seed hash is shown before each bet. After the bet, the raw server seed is revealed so you can verify using HMAC-SHA256.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROULETTE -->
+                <div id="game-roulette" class="bg-card border border-border rounded-xl p-4 sm:p-6 hidden">
+                    <div class="text-center mb-6">
+                        <h2 class="font-orbitron text-2xl mb-2">ROULETTE</h2>
+                        <p class="text-gray-500 text-sm">Place your bets before the wheel spins!</p>
+                    </div>
+
+                    <!-- Timer -->
+                    <div class="text-center mb-6">
+                        <div id="roulette-phase" class="text-lg font-orbitron mb-2">BETTING OPEN</div>
+                        <div id="roulette-timer" class="text-3xl font-orbitron text-primary">25</div>
+                        <div id="roulette-last-result" class="mt-2 text-gray-400"></div>
+                    </div>
+
+                    <!-- Wheel: rim spins; center stays still for readable result -->
+                    <div id="roulette-wheel" class="roulette-wheel-ui hidden" aria-live="polite">
+                        <div class="roulette-wheel-pointer" aria-hidden="true"></div>
+                        <div class="roulette-wheel-rim-wrap">
+                            <div class="roulette-wheel-rim"></div>
+                        </div>
+                        <div class="roulette-wheel-hub">
+                            <span id="wheel-result" class="roulette-result-num">—</span>
+                        </div>
+                    </div>
+
+                    <!-- Bet Options -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+                        <button onclick="selectRouletteBet('red')" id="bet-red" class="p-3 rounded-lg bg-roulette-red hover:opacity-80 font-orbitron">RED (2x)</button>
+                        <button onclick="selectRouletteBet('black')" id="bet-black" class="p-3 rounded-lg bg-roulette-black hover:opacity-80 font-orbitron">BLACK (2x)</button>
+                        <button onclick="selectRouletteBet('green')" id="bet-green" class="p-3 rounded-lg bg-roulette-green hover:opacity-80 font-orbitron hidden">0/00 (35x)</button>
+                        <button onclick="selectRouletteBet('odd')" id="bet-odd" class="p-3 rounded-lg bg-white/10 hover:bg-white/20 font-orbitron">ODD (2x)</button>
+                        <button onclick="selectRouletteBet('even')" id="bet-even" class="p-3 rounded-lg bg-white/10 hover:bg-white/20 font-orbitron">EVEN (2x)</button>
+                        <button onclick="selectRouletteBet('low')" id="bet-low" class="p-3 rounded-lg bg-white/10 hover:bg-white/20 font-orbitron">1-18 (2x)</button>
+                        <button onclick="selectRouletteBet('high')" id="bet-high" class="p-3 rounded-lg bg-white/10 hover:bg-white/20 font-orbitron">19-36 (2x)</button>
+                        <button onclick="selectRouletteBet('dozen1')" id="bet-dozen1" class="p-3 rounded-lg bg-white/10 hover:bg-white/20 font-orbitron">1-12 (3x)</button>
+                        <button onclick="selectRouletteBet('dozen2')" id="bet-dozen2" class="p-3 rounded-lg bg-white/10 hover:bg-white/20 font-orbitron">13-24 (3x)</button>
+                        <button onclick="selectRouletteBet('dozen3')" id="bet-dozen3" class="p-3 rounded-lg bg-white/10 hover:bg-white/20 font-orbitron">25-36 (3x)</button>
+                    </div>
+
+                    <!-- Number Grid -->
+                    <div class="mb-6">
+                        <div class="text-gray-400 text-sm mb-2">Or pick a number (35x payout):</div>
+                        <div id="roulette-numbers" class="grid grid-cols-12 gap-1">
+                            <!-- Numbers rendered by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Bet Controls -->
+                    <div class="text-center">
+                        <div id="selected-bet" class="text-gray-400 mb-2">Select a bet type above</div>
+                        <div class="flex items-center justify-center gap-4 mb-4">
+                            <button onclick="adjustRouletteBet(-50)" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20">-50</button>
+                            <button onclick="adjustRouletteBet(-10)" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20">-10</button>
+                            <div class="bg-black/40 px-6 py-3 rounded-lg">
+                                <span class="text-gray-400">Bet:</span>
+                                <span id="roulette-bet" class="text-primary font-bold ml-2">50</span>
+                                <i class="fas fa-gem text-primary ml-1"></i>
+                            </div>
+                            <button onclick="adjustRouletteBet(10)" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20">+10</button>
+                            <button onclick="adjustRouletteBet(50)" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20">+50</button>
+                        </div>
+                        <button id="roulette-place-btn" onclick="placeRouletteBet()" class="px-8 py-3 bg-primary text-black font-orbitron font-bold rounded-lg hover:bg-hover transition-colors disabled:opacity-50" disabled>
+                            PLACE BET
+                        </button>
+                        <div id="roulette-bet-placed" class="hidden text-violet-300 mt-2">
+                            <i class="fas fa-check mr-2"></i>Bet placed! Waiting for spin...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Players Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="bg-card border border-border rounded-xl p-4 sticky top-20">
+                    <h3 class="font-orbitron text-lg mb-4 flex items-center gap-2">
+                        <span class="live-dot"></span>
+                        LIVE PLAYERS
+                    </h3>
+
+                    <!-- Blackjack Players -->
+                    <div id="live-blackjack" class="mb-6">
+                        <div class="text-gray-400 text-xs mb-2 flex justify-between">
+                            <span>BLACKJACK</span>
+                            <span id="bj-count">0 playing</span>
+                        </div>
+                        <div id="bj-players" class="space-y-2">
+                            <div class="text-gray-600 text-sm">No active players</div>
+                        </div>
+                    </div>
+
+                    <!-- Roulette Players -->
+                    <div id="live-roulette" class="mb-6">
+                        <div class="text-gray-400 text-xs mb-2">ROULETTE</div>
+                        <div id="roulette-players" class="space-y-2">
+                            <div class="text-gray-600 text-sm">No bets placed</div>
+                        </div>
+                    </div>
+
+                    <!-- Plinko Players -->
+                    <div id="live-plinko">
+                        <div class="text-gray-400 text-xs mb-2">PLINKO</div>
+                        <div id="plinko-players" class="space-y-2">
+                            <div class="text-gray-600 text-sm">No active players</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // ===== CONFIG =====
+        const API_BASE = '/api/gamble';
+        let currentBalance = 0;
+
+        // Bet amounts
+        let bjBet = 50;
+        let plinkoBet = 50;
+        let rouletteBet = 50;
+        let selectedRouletteBetType = null;
+        let selectedRouletteNumber = null;
+
+        // Plinko enhanced config
+        let plinkoRisk = 'medium';
+        let plinkoRows = 16;
+        let plinkoMode = 'manual';
+        let plinkoAutoRunning = false;
+        let plinkoAutoTimer = null;
+        let plinkoAutoRemaining = 0;
+        let plinkoTotalProfit = 0;
+        let plinkoActiveBalls = 0;
+        let plinkoClientSeed = '';
+        let plinkoRecentResults = [];
+
+        const PLINKO_MULTIPLIERS_TABLE = {
+            8:  { low: [5.6,2.1,1.1,1,0.5,1,1.1,2.1,5.6], medium: [13,3,1.3,0.7,0.4,0.7,1.3,3,13], high: [29,4,1.5,0.3,0.2,0.3,1.5,4,29] },
+            9:  { low: [5.6,2,1.6,1,0.7,0.7,1,1.6,2,5.6], medium: [18,4,1.7,0.9,0.5,0.5,0.9,1.7,4,18], high: [43,7,2,0.6,0.2,0.2,0.6,2,7,43] },
+            10: { low: [8.9,3,1.4,1.1,1,0.5,1,1.1,1.4,3,8.9], medium: [22,5,2,1.4,0.6,0.4,0.6,1.4,2,5,22], high: [76,10,3,0.9,0.3,0.2,0.3,0.9,3,10,76] },
+            11: { low: [8.4,3,1.9,1.3,1,0.7,0.7,1,1.3,1.9,3,8.4], medium: [24,6,3,1.8,0.7,0.5,0.5,0.7,1.8,3,6,24], high: [120,14,5.2,1.4,0.4,0.2,0.2,0.4,1.4,5.2,14,120] },
+            12: { low: [10,3,1.6,1.4,1.1,1,0.5,1,1.1,1.4,1.6,3,10], medium: [33,11,4,2,1.1,0.6,0.3,0.6,1.1,2,4,11,33], high: [170,24,8.1,2,0.7,0.2,0.2,0.2,0.7,2,8.1,24,170] },
+            13: { low: [8.1,4,3,1.9,1.2,0.9,0.7,0.7,0.9,1.2,1.9,3,4,8.1], medium: [43,13,6,3,1.3,0.7,0.4,0.4,0.7,1.3,3,6,13,43], high: [284,37,11,4,1,0.2,0.2,0.2,0.2,1,4,11,37,284] },
+            14: { low: [7.1,4,1.9,1.4,1.3,1.1,1,0.5,1,1.1,1.3,1.4,1.9,4,7.1], medium: [58,15,7,4,1.9,1,0.5,0.2,0.5,1,1.9,4,7,15,58], high: [420,56,18,5,1.9,0.3,0.2,0.2,0.2,0.3,1.9,5,18,56,420] },
+            15: { low: [15,8,3,2,1.5,1.1,1,0.7,0.7,1,1.1,1.5,2,3,8,15], medium: [88,18,11,5,3,1.3,0.5,0.3,0.3,0.5,1.3,3,5,11,18,88], high: [620,83,27,8,3,0.5,0.2,0.2,0.2,0.2,0.5,3,8,27,83,620] },
+            16: { low: [16,9,2,1.4,1.4,1.2,1.1,1,0.5,1,1.1,1.2,1.4,1.4,2,9,16], medium: [110,41,10,5,3,1.5,1,0.5,0.3,0.5,1,1.5,3,5,10,41,110], high: [1000,130,26,9,4,2,0.2,0.2,0.2,0.2,0.2,2,4,9,26,130,1000] }
+        };
+
+        // Roulette colors
+        const RED_NUMBERS = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
+
+        // ===== UTILITIES =====
+        function apiFetch(url, opts) {
+            return fetch(url, Object.assign({ credentials: 'same-origin', headers: { 'Content-Type': 'application/json' } }, opts || {}));
+        }
+
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = `toast show ${isError ? 'error' : 'success'}`;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function updateBalance(newBalance) {
+            currentBalance = newBalance;
+            document.getElementById('gem-balance').textContent = newBalance.toLocaleString();
+        }
+
+        // ===== GAME SWITCHING =====
+        function showGame(game) {
+            ['blackjack', 'plinko', 'roulette'].forEach(g => {
+                document.getElementById(`game-${g}`).classList.toggle('hidden', g !== game);
+                document.getElementById(`tab-${g}`).classList.toggle('tab-active', g === game);
+            });
+            // Rebuild plinko canvas when switching to it (needs visible container for sizing)
+            if (game === 'plinko' && plinkoActiveBalls === 0) {
+                setTimeout(() => rebuildPlinkoCanvas(), 50);
+            }
+        }
+
+        // ===== LOAD BALANCE =====
+        async function loadBalance() {
+            try {
+                const [uRes, bRes] = await Promise.all([
+                    apiFetch('/api/user'),
+                    apiFetch('/api/gems/balance')
+                ]);
+                const u = await uRes.json();
+                const data = await bRes.json();
+                const un = document.getElementById('user-name');
+                if (un && u.loggedIn && u.user) {
+                    un.textContent = u.user.gamertag || u.user.username || '';
+                    un.classList.remove('hidden');
+                }
+                if (data.success) {
+                    updateBalance(data.balance);
+                }
+            } catch (e) {
+                console.error('Balance load error:', e);
+            }
+        }
+
+        // ===== LIVE PLAYERS =====
+        // Escape HTML to prevent XSS from gamertags
+        function escHtml(str) {
+            const d = document.createElement('div');
+            d.textContent = str;
+            return d.innerHTML;
+        }
+
+        async function loadActivePlayers() {
+            try {
+                const res = await apiFetch(`${API_BASE}/active-players`);
+                const data = await res.json();
+                if (!data.success) return;
+
+                // Blackjack
+                document.getElementById('bj-count').textContent = `${data.blackjack.currentCount} playing`;
+                const bjContainer = document.getElementById('bj-players');
+                if (data.blackjack.players.length > 0) {
+                    bjContainer.innerHTML = data.blackjack.players.map(p => `
+                        <div class="live-player">
+                            <span class="live-dot"></span>
+                            <span class="text-sm">${escHtml(p.gamertag)}</span>
+                            <span class="text-primary text-xs ml-auto">${parseInt(p.bet) || 0}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    bjContainer.innerHTML = '<div class="text-gray-600 text-sm">No active players</div>';
+                }
+
+                // Roulette
+                const rouletteContainer = document.getElementById('roulette-players');
+                if (data.roulette.players.length > 0) {
+                    rouletteContainer.innerHTML = data.roulette.players.map(p => `
+                        <div class="live-player">
+                            <span class="live-dot"></span>
+                            <span class="text-sm truncate">${escHtml(p.gamertag)}</span>
+                            <span class="text-xs text-gray-400 ml-auto">${escHtml(p.betType)}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    rouletteContainer.innerHTML = '<div class="text-gray-600 text-sm">No bets placed</div>';
+                }
+
+                // Update roulette state
+                updateRouletteState(data.roulette);
+
+                // Plinko
+                const plinkoContainer = document.getElementById('plinko-players');
+                if (data.plinko.players.length > 0) {
+                    plinkoContainer.innerHTML = data.plinko.players.map(p => `
+                        <div class="live-player">
+                            <span class="live-dot"></span>
+                            <span class="text-sm">${escHtml(p.gamertag)}</span>
+                            <span class="text-primary text-xs ml-auto">${parseInt(p.bet) || 0}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    plinkoContainer.innerHTML = '<div class="text-gray-600 text-sm">No active players</div>';
+                }
+            } catch (e) {
+                console.error('Active players error:', e);
+            }
+        }
+
+        // ===== BLACKJACK =====
+        function adjustBjBet(amount) {
+            bjBet = Math.max(10, Math.min(1000, bjBet + amount));
+            document.getElementById('bj-bet').textContent = bjBet;
+        }
+
+        function renderCard(card, hidden = false) {
+            if (hidden || card.value === '?') {
+                return `<div class="playing-card hidden deal-animation"><i class="fas fa-question text-gray-500"></i></div>`;
+            }
+            const isRed = ['hearts', 'diamonds'].includes(card.suit);
+            const suitIcon = { hearts: '♥', diamonds: '♦', clubs: '♣', spades: '♠' }[card.suit];
+            return `<div class="playing-card ${isRed ? 'red' : 'black'} deal-animation">
+                <div>${card.value}</div>
+                <div>${suitIcon}</div>
+            </div>`;
+        }
+
+        async function startBlackjack() {
+            if (bjBet > currentBalance) {
+                showToast('Insufficient gems!', true);
+                return;
+            }
+
+            try {
+                const res = await apiFetch(`${API_BASE}/blackjack/start`, {
+                    method: 'POST',
+                    body: JSON.stringify({ bet: bjBet })
+                });
+                const data = await res.json();
+
+                if (!data.success) {
+                    showToast(data.error, true);
+                    return;
+                }
+
+                // Update balance (use !== undefined to handle 0 correctly)
+                updateBalance(data.newBalance !== undefined ? data.newBalance : currentBalance - bjBet);
+
+                // Render cards
+                document.getElementById('dealer-cards').innerHTML = data.dealerHand.map(c => renderCard(c)).join('');
+                document.getElementById('player-cards').innerHTML = data.playerHand.map(c => renderCard(c)).join('');
+                document.getElementById('dealer-value').textContent = data.dealerValue ? `(${data.dealerValue})` : '';
+                document.getElementById('player-value').textContent = `(${data.playerValue})`;
+
+                // Show/hide controls
+                document.getElementById('bj-betting').classList.add('hidden');
+                document.getElementById('bj-result').classList.add('hidden');
+
+                if (data.status === 'blackjack' || data.status !== 'playing') {
+                    showBlackjackResult(data);
+                } else {
+                    unlockBjActions();
+                    document.getElementById('bj-actions').classList.remove('hidden');
+                    document.getElementById('bj-double-btn').classList.toggle('hidden', !data.canDouble);
+                }
+
+                loadActivePlayers();
+            } catch (e) {
+                showToast('Error starting game', true);
+            }
+        }
+
+        let bjActionLocked = false;
+        function lockBjActions() {
+            bjActionLocked = true;
+            document.querySelectorAll('#bj-actions button').forEach(b => b.disabled = true);
+        }
+        function unlockBjActions() {
+            bjActionLocked = false;
+            document.querySelectorAll('#bj-actions button').forEach(b => b.disabled = false);
+        }
+
+        async function blackjackHit() {
+            if (bjActionLocked) return;
+            lockBjActions();
+            try {
+                const res = await apiFetch(`${API_BASE}/blackjack/hit`, { method: 'POST' });
+                const data = await res.json();
+
+                if (!data.success) { showToast(data.error, true); unlockBjActions(); return; }
+
+                document.getElementById('player-cards').innerHTML = data.playerHand.map(c => renderCard(c)).join('');
+                document.getElementById('player-value').textContent = `(${data.playerValue})`;
+
+                if (data.status !== 'playing') {
+                    showBlackjackResult(data);
+                } else {
+                    unlockBjActions();
+                }
+            } catch (e) { showToast('Error', true); unlockBjActions(); }
+        }
+
+        async function blackjackStand() {
+            if (bjActionLocked) return;
+            lockBjActions();
+            try {
+                const res = await apiFetch(`${API_BASE}/blackjack/stand`, { method: 'POST' });
+                const data = await res.json();
+                if (!data.success) { showToast(data.error, true); unlockBjActions(); return; }
+                showBlackjackResult(data);
+            } catch (e) { showToast('Error', true); unlockBjActions(); }
+        }
+
+        async function blackjackDouble() {
+            if (bjActionLocked) return;
+            lockBjActions();
+            try {
+                const res = await apiFetch(`${API_BASE}/blackjack/double`, { method: 'POST' });
+                const data = await res.json();
+                if (!data.success) { showToast(data.error, true); unlockBjActions(); return; }
+                showBlackjackResult(data);
+            } catch (e) { showToast('Error', true); unlockBjActions(); }
+        }
+
+        function showBlackjackResult(data) {
+            unlockBjActions();
+            document.getElementById('dealer-cards').innerHTML = data.dealerHand.map(c => renderCard(c)).join('');
+            document.getElementById('player-cards').innerHTML = data.playerHand.map(c => renderCard(c)).join('');
+            document.getElementById('dealer-value').textContent = `(${data.dealerValue})`;
+            document.getElementById('player-value').textContent = `(${data.playerValue})`;
+
+            document.getElementById('bj-actions').classList.add('hidden');
+            document.getElementById('bj-result').classList.remove('hidden');
+            document.getElementById('bj-new-game').classList.remove('hidden');
+
+            const resultText = document.getElementById('bj-result-text');
+            const winAmount = document.getElementById('bj-win-amount');
+
+            if (data.status === 'blackjack') {
+                resultText.innerHTML = '<span class="text-primary">BLACKJACK!</span>';
+            } else if (data.status === 'win' || data.status === 'dealer_bust') {
+                resultText.innerHTML = '<span class="text-fuchsia-300">YOU WIN!</span>';
+            } else if (data.status === 'bust' || data.status === 'lose' || data.status === 'dealer_blackjack') {
+                resultText.innerHTML = '<span class="text-red-400">YOU LOSE</span>';
+            } else if (data.status === 'push') {
+                resultText.innerHTML = '<span class="text-gray-400">PUSH (Bet returned)</span>';
+            } else {
+                resultText.innerHTML = '<span class="text-red-400">YOU LOSE</span>';
+            }
+
+            winAmount.textContent = data.winAmount > 0 ? `+${data.winAmount} gems` : '';
+            if (data.newBalance !== undefined && data.newBalance !== null) {
+                updateBalance(data.newBalance);
+            }
+            loadActivePlayers();
+        }
+
+        function resetBlackjack() {
+            unlockBjActions();
+            document.getElementById('dealer-cards').innerHTML = '';
+            document.getElementById('player-cards').innerHTML = '';
+            document.getElementById('dealer-value').textContent = '';
+            document.getElementById('player-value').textContent = '';
+            document.getElementById('bj-result').classList.add('hidden');
+            document.getElementById('bj-new-game').classList.add('hidden');
+            document.getElementById('bj-betting').classList.remove('hidden');
+        }
+
+        // ===== PLINKO (Enhanced: Matter.js + Risk/Rows/Provably Fair) =====
+        let plinkoEngine = null, plinkoRender = null, plinkoRunner = null;
+        let plinkoPegBodies = [];
+        let plinkoBallBodies = [];
+        let plinkoCanvasW = 700, plinkoCanvasH = 525;
+
+        function plinkoGenSeed() {
+            var chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+            var s = '';
+            for (var i = 0; i < 16; i++) s += chars[Math.floor(Math.random() * chars.length)];
+            return s;
+        }
+
+        function initPlinko() {
+            plinkoClientSeed = plinkoGenSeed();
+            document.getElementById('plinko-client-seed').value = plinkoClientSeed;
+            renderPlinkoSlots();
+            rebuildPlinkoCanvas();
+        }
+
+        function getSlotColor(idx, total) {
+            var center = Math.floor(total / 2);
+            var dist = Math.abs(idx - center);
+            var maxDist = center;
+            var ratio = dist / maxDist;
+            if (ratio >= 0.85) return { bg: '#e74c3c', text: '#fff' };
+            if (ratio >= 0.65) return { bg: '#c026d3', text: '#fff' };
+            if (ratio >= 0.45) return { bg: '#a855f7', text: '#fff' };
+            if (ratio >= 0.25) return { bg: '#7c3aed', text: '#fff' };
+            return { bg: '#5b21b6', text: '#e9d5ff' };
+        }
+
+        function renderPlinkoSlots() {
+            var mults = PLINKO_MULTIPLIERS_TABLE[plinkoRows][plinkoRisk];
+            var container = document.getElementById('plinko-slots');
+            container.innerHTML = mults.map(function(m, i) {
+                var c = getSlotColor(i, mults.length);
+                return '<div class="plinko-slot" id="slot-' + i + '" style="background:' + c.bg + ';color:' + c.text + '">' + m + 'x</div>';
+            }).join('');
+            // Re-align after render
+            setTimeout(alignPlinkoSlots, 10);
+        }
+
+        function rebuildPlinkoCanvas() {
+            var container = document.getElementById('plinko-canvas-container');
+            var cw = container.clientWidth || 700;
+
+            plinkoCanvasW = Math.min(800, cw);
+            plinkoCanvasH = Math.floor(plinkoCanvasW * 0.75);
+
+            if (plinkoRunner) Matter.Runner.stop(plinkoRunner);
+            if (plinkoRender) Matter.Render.stop(plinkoRender);
+            if (plinkoEngine) Matter.Engine.clear(plinkoEngine);
+            container.innerHTML = '';
+            plinkoPegBodies = [];
+            plinkoBallBodies = [];
+
+            var { Engine, Render, Runner, Bodies, Composite } = Matter;
+            var ROWS = plinkoRows;
+            var PEG_R = Math.max(2.5, 4 - (ROWS - 8) * 0.15);
+            var TOP = 30, BOT = 10;
+            var pegGap = (plinkoCanvasW - 60) / (ROWS + 2);
+            var rowH = pegGap; // square spacing so pegs are evenly distributed
+            // Recalculate canvas height to fit exactly
+            plinkoCanvasH = TOP + (ROWS - 1) * rowH + BOT;
+            var W = plinkoCanvasW, H = plinkoCanvasH;
+
+            plinkoEngine = Engine.create({ gravity: { x: 0, y: 0 } });
+            plinkoRender = Render.create({
+                element: container,
+                engine: plinkoEngine,
+                options: { width: W, height: H, wireframes: false, background: '#111111', pixelRatio: Math.min(window.devicePixelRatio || 1, 2) }
+            });
+
+            // Build peg pyramid - last row has (ROWS+2) pegs, slots sit in the gaps between them
+            for (var row = 0; row < ROWS; row++) {
+                var n = row + 3;
+                var rw = (n - 1) * pegGap;
+                var x0 = (W - rw) / 2;
+                var y = TOP + row * rowH;
+                for (var col = 0; col < n; col++) {
+                    var peg = Bodies.circle(x0 + col * pegGap, y, PEG_R, {
+                        isStatic: true, render: { fillStyle: '#555' }, label: 'peg'
+                    });
+                    plinkoPegBodies.push(peg);
+                    Composite.add(plinkoEngine.world, peg);
+                }
+            }
+
+            // No bin dividers — slots are rendered as HTML directly below the canvas
+
+            // Walls
+            Composite.add(plinkoEngine.world, [
+                Bodies.rectangle(-5, H / 2, 10, H, { isStatic: true, render: { visible: false } }),
+                Bodies.rectangle(W + 5, H / 2, 10, H, { isStatic: true, render: { visible: false } }),
+                Bodies.rectangle(W / 2, H + 5, W, 10, { isStatic: true, render: { visible: false } })
+            ]);
+
+            plinkoRunner = Runner.create();
+            Render.run(plinkoRender);
+            Runner.run(plinkoRunner, plinkoEngine);
+
+            // Align HTML slot row to match the last row's peg gaps
+            alignPlinkoSlots();
+        }
+
+        function alignPlinkoSlots() {
+            // The last row of pegs has (ROWS+2) pegs. The (ROWS+1) slots sit between them.
+            // We need the slot container padding to match the canvas peg positions.
+            var container = document.getElementById('plinko-canvas-container');
+            var canvas = container.querySelector('canvas');
+            if (!canvas) return;
+
+            var displayW = canvas.clientWidth;
+            var scaleRatio = displayW / plinkoCanvasW;
+            var ROWS = plinkoRows;
+            var pegGap = (plinkoCanvasW - 60) / (ROWS + 2);
+
+            // Last row peg positions: n = ROWS+2 pegs
+            var lastN = ROWS + 2;
+            var lastRW = (lastN - 1) * pegGap;
+            var lastX0 = (plinkoCanvasW - lastRW) / 2;
+            // First slot center = midpoint between peg 0 and peg 1 = lastX0 + pegGap/2
+            // Last slot center = lastX0 + (lastN-2)*pegGap + pegGap/2
+            var firstSlotCenter = lastX0 + pegGap / 2;
+            var lastSlotCenter = lastX0 + (lastN - 2) * pegGap + pegGap / 2;
+            // Each slot width in canvas units = pegGap
+            // Left padding = firstSlotCenter - pegGap/2 = lastX0
+            var padLeft = lastX0 * scaleRatio;
+            var padRight = (plinkoCanvasW - lastSlotCenter - pegGap / 2) * scaleRatio;
+
+            var slotsEl = document.getElementById('plinko-slots');
+            slotsEl.style.paddingLeft = padLeft + 'px';
+            slotsEl.style.paddingRight = padRight + 'px';
+            slotsEl.style.gap = '0px';
+        }
+
+        // Waypoints for ball animation
+        function computePlinkoWaypoints(path) {
+            var ROWS = path.length;
+            var TOP = 30;
+            var W = plinkoCanvasW;
+            var pegGap = (W - 60) / (ROWS + 2);
+            var rowH = pegGap;
+
+            var wp = [];
+            var rightCount = 0;
+            wp.push({ x: W / 2, y: TOP - 18 });
+
+            for (var row = 0; row < ROWS; row++) {
+                var n = row + 3;
+                var rw = (n - 1) * pegGap;
+                var x0 = (W - rw) / 2;
+                var pegIdx = rightCount + 1;
+                var pegX = x0 + pegIdx * pegGap;
+                var pegY = TOP + row * rowH;
+
+                wp.push({ x: pegX, y: pegY - 1 });
+                if (path[row] === 'R') rightCount++;
+
+                var jitter = (Math.random() - 0.5) * pegGap * 0.15;
+                var gapX = W / 2 + (rightCount - (row + 1) / 2) * pegGap + jitter;
+                wp.push({ x: gapX, y: pegY + rowH * 0.5 });
+            }
+
+            // Land in the slot gap — aligned with the last row's peg gaps
+            var lastN = ROWS + 2;
+            var lastRW = (lastN - 1) * pegGap;
+            var lastX0 = (W - lastRW) / 2;
+            var slotCenterX = lastX0 + pegGap / 2 + rightCount * pegGap;
+            wp.push({ x: slotCenterX, y: TOP + (ROWS - 1) * rowH + 8 });
+            return wp;
+        }
+
+        function animatePlinkoBall(path, resultData) {
+            var { Bodies, Composite, Body } = Matter;
+            var waypoints = computePlinkoWaypoints(path);
+            var ballR = Math.max(5, 7 - (plinkoRows - 8) * 0.2);
+            var isWin = resultData.profit >= 0;
+
+            var ball = Bodies.circle(waypoints[0].x, waypoints[0].y, ballR, {
+                isStatic: true,
+                render: { fillStyle: isWin ? '#c084fc' : '#ff6b6b' },
+                label: 'ball'
+            });
+            Composite.add(plinkoEngine.world, ball);
+            plinkoBallBodies.push(ball);
+            plinkoActiveBalls++;
+
+            var segIdx = 0, progress = 0, lastTime = performance.now();
+            var speedFactor = Math.max(0.6, 1 - (plinkoRows - 8) * 0.04);
+
+            function segDur(idx) {
+                if (idx === 0) return 200 * speedFactor;
+                if (idx === waypoints.length - 2) return 150 * speedFactor;
+                if (idx % 2 === 1) return 100 * speedFactor;
+                return 70 * speedFactor;
+            }
+
+            function step(now) {
+                if (!ball) return;
+                var dt = now - lastTime;
+                lastTime = now;
+                progress += dt / segDur(segIdx);
+
+                while (progress >= 1 && segIdx < waypoints.length - 1) {
+                    progress -= 1;
+                    segIdx++;
+                }
+
+                if (segIdx >= waypoints.length - 1) {
+                    Body.setPosition(ball, waypoints[waypoints.length - 1]);
+                    setTimeout(function() {
+                        Composite.remove(plinkoEngine.world, ball);
+                        var idx = plinkoBallBodies.indexOf(ball);
+                        if (idx > -1) plinkoBallBodies.splice(idx, 1);
+                        plinkoActiveBalls--;
+                        plinkoHighlightSlot(resultData.position, resultData.multiplier, resultData.profit);
+                    }, 200);
+                    return;
+                }
+
+                var from = waypoints[segIdx], to = waypoints[segIdx + 1];
+                var t = Math.min(progress, 1);
+                t = (segIdx % 2 === 0) ? t * t : 1 - (1 - t) * (1 - t);
+
+                var x = from.x + (to.x - from.x) * t;
+                var y = from.y + (to.y - from.y) * t;
+                Body.setPosition(ball, { x: x, y: y });
+
+                // Flash nearby pegs
+                if (segIdx % 2 === 1) {
+                    plinkoPegBodies.forEach(function(peg) {
+                        var dx = peg.position.x - x, dy = peg.position.y - y;
+                        if (dx * dx + dy * dy < 400) {
+                            peg.render.fillStyle = '#a855f7';
+                            setTimeout(function() { peg.render.fillStyle = '#555'; }, 120);
+                        }
+                    });
+                }
+
+                requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function plinkoHighlightSlot(position, multiplier, profit) {
+            var slot = document.getElementById('slot-' + position);
+            if (slot) {
+                slot.classList.add('hit', 'glow');
+                setTimeout(function() { slot.classList.remove('hit', 'glow'); }, 600);
+            }
+            // Add recent result
+            var isWin = profit >= 0;
+            plinkoRecentResults.unshift({ multiplier: multiplier, profit: profit, isWin: isWin });
+            if (plinkoRecentResults.length > 30) plinkoRecentResults.pop();
+            var rc = document.getElementById('plinko-recent');
+            rc.innerHTML = plinkoRecentResults.map(function(r) {
+                var bg = r.isWin ? 'background:rgba(39,174,96,0.2);color:#2ecc71' : 'background:rgba(231,76,60,0.2);color:#e74c3c';
+                return '<span class="plinko-result-chip" style="' + bg + '">' + r.multiplier + 'x</span>';
+            }).join('');
+        }
+
+        // Controls
+        function plinkoHalfBet() {
+            plinkoBet = Math.max(10, Math.floor(plinkoBet / 2));
+            document.getElementById('plinko-bet-input').value = plinkoBet;
+        }
+        function plinkoDoubleBet() {
+            plinkoBet = Math.min(500, plinkoBet * 2);
+            document.getElementById('plinko-bet-input').value = plinkoBet;
+        }
+        function setPlinkoRisk(risk) {
+            plinkoRisk = risk;
+            document.querySelectorAll('.plinko-risk-btn').forEach(function(btn) {
+                btn.classList.remove('active');
+                btn.classList.add('bg-dark', 'border', 'border-border', 'text-gray-500');
+            });
+            var active = document.querySelector('.plinko-risk-btn[onclick="setPlinkoRisk(\'' + risk + '\')"]');
+            if (active) {
+                active.classList.add('active');
+                active.classList.remove('bg-dark', 'border', 'border-border', 'text-gray-500');
+            }
+            renderPlinkoSlots();
+            if (plinkoActiveBalls === 0) rebuildPlinkoCanvas();
+        }
+        function setPlinkoRows(val) {
+            plinkoRows = parseInt(val);
+            document.getElementById('plinko-rows-value').textContent = plinkoRows;
+            renderPlinkoSlots();
+            if (plinkoActiveBalls === 0) rebuildPlinkoCanvas();
+        }
+        function setPlinkoMode(mode) {
+            plinkoMode = mode;
+            var manBtn = document.getElementById('plinko-mode-manual');
+            var autoBtn = document.getElementById('plinko-mode-auto');
+            var autoSettings = document.getElementById('plinko-auto-settings');
+            var playBtn = document.getElementById('plinko-play-btn');
+            if (mode === 'manual') {
+                manBtn.className = 'plinko-mode-btn active-mode flex-1 py-2 text-xs font-bold text-center';
+                autoBtn.className = 'plinko-mode-btn flex-1 py-2 text-xs font-bold text-center text-gray-500';
+                autoSettings.classList.add('hidden');
+                playBtn.textContent = 'DROP BALL';
+            } else {
+                autoBtn.className = 'plinko-mode-btn active-mode flex-1 py-2 text-xs font-bold text-center';
+                manBtn.className = 'plinko-mode-btn flex-1 py-2 text-xs font-bold text-center text-gray-500';
+                autoSettings.classList.remove('hidden');
+                playBtn.textContent = 'START AUTOBET';
+            }
+        }
+        function plinkoRandomizeSeed() {
+            plinkoClientSeed = plinkoGenSeed();
+            document.getElementById('plinko-client-seed').value = plinkoClientSeed;
+        }
+
+        function updatePlinkoProfitDisplay() {
+            var el = document.getElementById('plinko-total-profit');
+            el.textContent = (plinkoTotalProfit >= 0 ? '+' : '') + plinkoTotalProfit.toFixed(2);
+            el.className = 'font-bold text-sm ' + (plinkoTotalProfit >= 0 ? 'text-violet-300' : 'text-red-400');
+        }
+
+        // Play handlers
+        async function handlePlinkoPlay() {
+            if (plinkoMode === 'auto') {
+                if (plinkoAutoRunning) { stopPlinkoAutobet(); }
+                else { startPlinkoAutobet(); }
+                return;
+            }
+            await doPlinkoDropEnhanced();
+        }
+
+        async function doPlinkoDropEnhanced() {
+            plinkoBet = parseInt(document.getElementById('plinko-bet-input').value) || 50;
+            plinkoBet = Math.max(10, Math.min(500, plinkoBet));
+            var seedInput = document.getElementById('plinko-client-seed');
+            plinkoClientSeed = seedInput.value || plinkoGenSeed();
+            if (!seedInput.value) seedInput.value = plinkoClientSeed;
+
+            if (plinkoBet > currentBalance) { showToast('Insufficient gems!', true); return false; }
+
+            var playBtn = document.getElementById('plinko-play-btn');
+            if (plinkoMode === 'manual') { playBtn.disabled = true; playBtn.textContent = 'DROPPING...'; }
+
+            try {
+                var res = await apiFetch(API_BASE + '/plinko/drop-enhanced', {
+                    method: 'POST',
+                    body: JSON.stringify({ bet: plinkoBet, rows: plinkoRows, risk: plinkoRisk, client_seed: plinkoClientSeed })
+                });
+                var data = await res.json();
+
+                if (!data.success) {
+                    showToast(data.error, true);
+                    if (plinkoMode === 'manual') { playBtn.disabled = false; playBtn.textContent = 'DROP BALL'; }
+                    return false;
+                }
+
+                updateBalance(data.newBalance);
+
+                // Fairness
+                if (data.fairness) {
+                    document.getElementById('plinko-fair-hash').textContent = data.fairness.serverSeedHash;
+                    document.getElementById('plinko-fair-seed').textContent = data.fairness.serverSeed;
+                    document.getElementById('plinko-fair-client').textContent = data.fairness.clientSeed;
+                    document.getElementById('plinko-fair-nonce').textContent = data.fairness.nonce;
+                }
+
+                plinkoTotalProfit += data.profit;
+                updatePlinkoProfitDisplay();
+
+                animatePlinkoBall(data.path, data);
+
+                if (data.profit >= 0) {
+                    showToast(data.multiplier + 'x  +' + data.winAmount + ' gems');
+                }
+
+                if (plinkoMode === 'manual') {
+                    setTimeout(function() { playBtn.disabled = false; playBtn.textContent = 'DROP BALL'; }, 400);
+                }
+                loadActivePlayers();
+                return true;
+            } catch (e) {
+                showToast('Error', true);
+                if (plinkoMode === 'manual') { playBtn.disabled = false; playBtn.textContent = 'DROP BALL'; }
+                return false;
+            }
+        }
+
+        function startPlinkoAutobet() {
+            var count = parseInt(document.getElementById('plinko-auto-count').value) || 0;
+            var speed = Math.max(500, parseInt(document.getElementById('plinko-auto-speed').value) || 1000);
+            plinkoAutoRunning = true;
+            plinkoAutoRemaining = count;
+
+            var playBtn = document.getElementById('plinko-play-btn');
+            playBtn.textContent = 'STOP AUTOBET';
+            playBtn.classList.remove('bg-primary', 'hover:bg-hover');
+            playBtn.classList.add('bg-red-500', 'hover:bg-red-600', 'auto-active');
+
+            async function tick() {
+                if (!plinkoAutoRunning) return;
+                if (plinkoAutoRemaining > 0) plinkoAutoRemaining--;
+                var ok = await doPlinkoDropEnhanced();
+                if (!ok || (plinkoAutoRemaining === 0 && count > 0)) { stopPlinkoAutobet(); return; }
+                plinkoAutoTimer = setTimeout(tick, speed);
+            }
+            tick();
+        }
+
+        function stopPlinkoAutobet() {
+            plinkoAutoRunning = false;
+            if (plinkoAutoTimer) { clearTimeout(plinkoAutoTimer); plinkoAutoTimer = null; }
+            var playBtn = document.getElementById('plinko-play-btn');
+            playBtn.textContent = 'START AUTOBET';
+            playBtn.classList.add('bg-primary', 'hover:bg-hover');
+            playBtn.classList.remove('bg-red-500', 'hover:bg-red-600', 'auto-active');
+        }
+
+        // Fairness modal
+        function openPlinkoFairness() { document.getElementById('plinko-fairness-modal').classList.add('open'); }
+        function closePlinkoFairness() { document.getElementById('plinko-fairness-modal').classList.remove('open'); }
+
+        // Resize handler for plinko
+        var plinkoResizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(plinkoResizeTimer);
+            plinkoResizeTimer = setTimeout(function() {
+                if (!plinkoAutoRunning && plinkoActiveBalls === 0) {
+                    rebuildPlinkoCanvas();
+                    renderPlinkoSlots();
+                }
+            }, 250);
+        });
+
+        // ===== ROULETTE =====
+        function initRoulette() {
+            const numbersContainer = document.getElementById('roulette-numbers');
+            let html = '<div class="roulette-number green" onclick="selectRouletteNumber(0)">0</div>';
+            html += '<div class="roulette-number green" onclick="selectRouletteNumber(37)">00</div>';
+
+            for (let i = 1; i <= 36; i++) {
+                const color = RED_NUMBERS.includes(i) ? 'red' : 'black';
+                html += `<div class="roulette-number ${color}" onclick="selectRouletteNumber(${i})">${i}</div>`;
+            }
+            numbersContainer.innerHTML = html;
+        }
+
+        function adjustRouletteBet(amount) {
+            rouletteBet = Math.max(10, Math.min(500, rouletteBet + amount));
+            document.getElementById('roulette-bet').textContent = rouletteBet;
+        }
+
+        function selectRouletteBet(type) {
+            selectedRouletteBetType = type;
+            selectedRouletteNumber = null;
+
+            // Clear number selection
+            document.querySelectorAll('.roulette-number').forEach(el => el.classList.remove('selected'));
+
+            // Highlight selected bet type
+            document.querySelectorAll('[id^="bet-"]').forEach(el => el.classList.remove('ring-2', 'ring-primary'));
+            const btn = document.getElementById(`bet-${type}`);
+            if (btn) btn.classList.add('ring-2', 'ring-primary');
+
+            document.getElementById('selected-bet').textContent = `Selected: ${type.toUpperCase()}`;
+            document.getElementById('roulette-place-btn').disabled = false;
+        }
+
+        function selectRouletteNumber(num) {
+            selectedRouletteBetType = 'number';
+            selectedRouletteNumber = num;
+
+            // Clear other selections
+            document.querySelectorAll('[id^="bet-"]').forEach(el => el.classList.remove('ring-2', 'ring-primary'));
+            document.querySelectorAll('.roulette-number').forEach(el => el.classList.remove('selected'));
+
+            // Highlight selected number
+            event.target.classList.add('selected');
+
+            document.getElementById('selected-bet').textContent = `Selected: Number ${num === 37 ? '00' : num}`;
+            document.getElementById('roulette-place-btn').disabled = false;
+        }
+
+        async function placeRouletteBet() {
+            if (!selectedRouletteBetType) {
+                showToast('Select a bet type first!', true);
+                return;
+            }
+
+            if (rouletteBet > currentBalance) {
+                showToast('Insufficient gems!', true);
+                return;
+            }
+
+            try {
+                const res = await apiFetch(`${API_BASE}/roulette/bet`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        bet: rouletteBet,
+                        betType: selectedRouletteBetType,
+                        betValue: selectedRouletteNumber
+                    })
+                });
+                const data = await res.json();
+
+                if (!data.success) {
+                    showToast(data.error, true);
+                    return;
+                }
+
+                showToast(data.message);
+                updateBalance(data.newBalance);
+
+                document.getElementById('roulette-place-btn').classList.add('hidden');
+                document.getElementById('roulette-bet-placed').classList.remove('hidden');
+
+                loadActivePlayers();
+            } catch (e) {
+                showToast('Error placing bet', true);
+            }
+        }
+
+        function updateRouletteState(state) {
+            const phaseEl = document.getElementById('roulette-phase');
+            const timerEl = document.getElementById('roulette-timer');
+            const wheelEl = document.getElementById('roulette-wheel');
+            const lastResultEl = document.getElementById('roulette-last-result');
+            const placeBtn = document.getElementById('roulette-place-btn');
+            const placedEl = document.getElementById('roulette-bet-placed');
+
+            if (state.phase === 'betting') {
+                phaseEl.textContent = 'BETTING OPEN';
+                phaseEl.className = 'text-lg font-orbitron mb-2 text-violet-300';
+                wheelEl.classList.add('hidden');
+
+                if (state.bettingEndsAt) {
+                    const remaining = Math.max(0, Math.ceil((state.bettingEndsAt - Date.now()) / 1000));
+                    timerEl.textContent = remaining;
+                }
+
+                // Reset bet button for new round
+                if (!placedEl.classList.contains('hidden')) {
+                    placedEl.classList.add('hidden');
+                    placeBtn.classList.remove('hidden');
+                }
+            } else {
+                phaseEl.textContent = 'SPINNING...';
+                phaseEl.className = 'text-lg font-orbitron mb-2 text-red-400';
+                timerEl.textContent = '...';
+                wheelEl.classList.remove('hidden');
+                wheelEl.classList.add('spinning');
+                const wr = document.getElementById('wheel-result');
+                if (wr) wr.textContent = '···';
+
+                if (state.spinEndTime) {
+                    const remaining = Math.max(0, Math.ceil((state.spinEndTime - Date.now()) / 1000));
+                    if (remaining === 0) {
+                        wheelEl.classList.remove('spinning');
+                        if (wr) {
+                            const n = state.lastResult;
+                            wr.textContent = n === 37 ? '00' : String(n);
+                        }
+                    }
+                }
+            }
+
+            if (state.lastResult !== null) {
+                const num = state.lastResult === 37 ? '00' : state.lastResult;
+                const color = state.lastResult === 0 || state.lastResult === 37 ? 'green' :
+                              (RED_NUMBERS.includes(state.lastResult) ? 'red' : 'black');
+                lastResultEl.innerHTML = `Last result: <span class="text-${color === 'green' ? 'green-400' : (color === 'red' ? 'red-400' : 'white')}">${num}</span>`;
+            }
+        }
+
+        // ===== INIT =====
+        async function init() {
+            const uRes = await apiFetch('/api/user');
+            const u = await uRes.json();
+            if (!u.loggedIn) {
+                window.location.href = '/gems';
+                return;
+            }
+
+            await loadBalance();
+            initPlinko();
+            initRoulette();
+            loadActivePlayers();
+
+            // Poll for updates
+            setInterval(loadActivePlayers, 2000);
+        }
+
+        init();
+    </script>
+    <script src="/assets/legacy-footer.js"></script>
+</body>
+</html>

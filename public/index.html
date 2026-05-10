@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Legacy Rust Servers | Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/legacy-theme.css">
+</head>
+<body>
+    <script src="/assets/legacy-navbar.js"></script>
+
+    <main class="legacy-page-wrap">
+        <section class="legacy-card p-4 sm:p-6 md:p-8 mb-6 md:mb-8" style="background:linear-gradient(135deg,#141414 0%,#0b0b0b 60%);">
+            <div class="flex flex-col sm:flex-row flex-wrap justify-between items-stretch sm:items-center gap-3 mb-4 pb-4 border-b border-white/10">
+                <a href="https://discord.gg/legacyrust" target="_blank" rel="noopener noreferrer" class="legacy-btn text-decoration-none inline-flex items-center gap-2" style="border-color:rgba(88,101,242,.45);">
+                    <i class="fa-brands fa-discord text-[#5865F2]"></i>
+                    <span>Join our Discord</span>
+                </a>
+                <a href="https://nitrado.net/" target="_blank" rel="noopener noreferrer" class="text-decoration-none inline-flex items-center gap-2 text-gray-400 hover:text-[#f7a600] transition-colors" style="font-family:Orbitron,sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;">
+                    <span class="text-gray-500 normal-case tracking-normal text-xs font-normal" style="font-family:Space Mono,monospace;">Partnered with</span>
+                    <span class="text-white tracking-widest">Nitrado</span>
+                </a>
+            </div>
+            <div class="legacy-store-banner-wrap">
+                <img class="legacy-store-banner" src="/assets/Legacy%20banner.gif" width="1200" height="220" alt="Legacy Rust Servers store banner" decoding="async">
+            </div>
+            <div class="flex flex-wrap gap-2 items-stretch sm:items-center mt-4 touch-manipulation">
+                <a href="/gems" class="legacy-btn text-decoration-none inline-flex items-center justify-center gap-1 flex-1 sm:flex-none min-h-[44px]"><i class="fa-solid fa-gem text-violet-400"></i>Gems</a>
+                <a href="/gamble" class="legacy-btn text-decoration-none inline-flex items-center justify-center gap-1 flex-1 sm:flex-none min-h-[44px]"><i class="fa-solid fa-dice text-violet-400"></i>Casino</a>
+                <button type="button" class="legacy-btn legacy-btn-primary flex-1 sm:flex-none min-h-[44px] justify-center sm:min-w-[8rem]" onclick="Cart.open()"><i class="fa-solid fa-cart-shopping mr-1"></i>Cart <span id="cart-badge" class="legacy-pill hidden">0</span></button>
+            </div>
+        </section>
+
+        <section class="mb-10 legacy-card p-6 sm:p-8 border border-white/10">
+            <h2 class="legacy-heading text-xl sm:text-2xl mb-6 text-center">Store</h2>
+
+            <div class="mb-8">
+                <h3 class="font-display text-lg uppercase tracking-widest text-violet-300 mb-4">Essentials</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <article class="legacy-card p-5 border border-violet-500/25 flex flex-col">
+                        <div class="legacy-product-thumb mb-4 aspect-video">
+                            <img src="/assets/Product%20Logos/legacy%20vip%20card.png" alt="VIP" width="600" height="340" class="w-full h-full object-cover rounded-lg border border-white/10" decoding="async">
+                        </div>
+                        <h4 class="font-display font-bold text-lg text-white uppercase tracking-wide mb-2">VIP</h4>
+                        <p class="text-gray-300 text-sm mb-4 flex-1 leading-relaxed">
+                            VIP Queue Access<br>
+                            Priority Server Access<br>
+                            VIP Role in Discord<br>
+                            Valid For a Month
+                        </p>
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/10">
+                            <span class="text-violet-300 font-bold text-lg font-mono">£4.99</span>
+                            <button type="button" class="legacy-btn legacy-btn-primary" onclick="Cart.add('vip', 'VIP', 499, '/assets/Product%20Logos/legacy%20vip%20card.png')"><i class="fa-solid fa-cart-plus mr-1"></i>Add to cart</button>
+                        </div>
+                    </article>
+
+                    <article class="legacy-card p-5 border border-white/15 flex flex-col">
+                        <div class="legacy-product-thumb mb-4 aspect-video">
+                            <img src="https://cdn.tip4serv.com/shops-img/98758859c7895f3e68fd1aa7c08a7af53655.webp" alt="Queue Skip" width="600" height="340" class="w-full h-full object-cover rounded-lg border border-white/10" decoding="async">
+                        </div>
+                        <h4 class="font-display font-bold text-lg text-white uppercase tracking-wide mb-2">Queue Skip</h4>
+                        <p class="text-gray-300 text-sm mb-4 flex-1 leading-relaxed">Get To The Front And Skip The Entire Queue</p>
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/10">
+                            <span class="text-violet-300 font-bold text-lg font-mono">£2.99</span>
+                            <button type="button" class="legacy-btn legacy-btn-primary" onclick="Cart.add('queue_skip', 'Queue Skip (One Time)', 299, 'https://cdn.tip4serv.com/shops-img/98758859c7895f3e68fd1aa7c08a7af53655.webp')"><i class="fa-solid fa-cart-plus mr-1"></i>Add to cart</button>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="font-display text-lg uppercase tracking-widest text-violet-300 mb-3">Ranks</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <article class="legacy-card p-5 border border-white/15 flex flex-col">
+                        <h4 class="font-display font-bold text-lg text-white uppercase tracking-wide mb-2">Doomsday Rank</h4>
+                        <p class="text-gray-400 text-sm mb-4 flex-1">Image coming soon.</p>
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/10">
+                            <span class="text-violet-300 font-bold text-lg font-mono">£84.99</span>
+                            <button type="button" class="legacy-btn legacy-btn-primary" onclick="Cart.add('rank_doomsday', 'Doomsday Rank', 8499, '')"><i class="fa-solid fa-cart-plus mr-1"></i>Add to cart</button>
+                        </div>
+                    </article>
+                    <article class="legacy-card p-5 border border-white/15 flex flex-col">
+                        <h4 class="font-display font-bold text-lg text-white uppercase tracking-wide mb-2">Celestial Rank</h4>
+                        <p class="text-gray-400 text-sm mb-4 flex-1">Image coming soon.</p>
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/10">
+                            <span class="text-violet-300 font-bold text-lg font-mono">£67.99</span>
+                            <button type="button" class="legacy-btn legacy-btn-primary" onclick="Cart.add('rank_celestial', 'Celestial Rank', 6799, '')"><i class="fa-solid fa-cart-plus mr-1"></i>Add to cart</button>
+                        </div>
+                    </article>
+                    <article class="legacy-card p-5 border border-white/15 flex flex-col">
+                        <h4 class="font-display font-bold text-lg text-white uppercase tracking-wide mb-2">Immortal Rank</h4>
+                        <p class="text-gray-400 text-sm mb-4 flex-1">Image coming soon.</p>
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/10">
+                            <span class="text-violet-300 font-bold text-lg font-mono">£53.99</span>
+                            <button type="button" class="legacy-btn legacy-btn-primary" onclick="Cart.add('rank_immortal', 'Immortal Rank', 5399, '')"><i class="fa-solid fa-cart-plus mr-1"></i>Add to cart</button>
+                        </div>
+                    </article>
+                    <article class="legacy-card p-5 border border-white/15 flex flex-col">
+                        <h4 class="font-display font-bold text-lg text-white uppercase tracking-wide mb-2">Void Rank</h4>
+                        <p class="text-gray-400 text-sm mb-4 flex-1">Image coming soon.</p>
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/10">
+                            <span class="text-violet-300 font-bold text-lg font-mono">£42.99</span>
+                            <button type="button" class="legacy-btn legacy-btn-primary" onclick="Cart.add('rank_void', 'Void Rank', 4299, '')"><i class="fa-solid fa-cart-plus mr-1"></i>Add to cart</button>
+                        </div>
+                    </article>
+                    <article class="legacy-card p-5 border border-white/15 flex flex-col">
+                        <h4 class="font-display font-bold text-lg text-white uppercase tracking-wide mb-2">Storm Rank</h4>
+                        <p class="text-gray-400 text-sm mb-4 flex-1">Image coming soon.</p>
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/10">
+                            <span class="text-violet-300 font-bold text-lg font-mono">£33.99</span>
+                            <button type="button" class="legacy-btn legacy-btn-primary" onclick="Cart.add('rank_storm', 'Storm Rank', 3399, '')"><i class="fa-solid fa-cart-plus mr-1"></i>Add to cart</button>
+                        </div>
+                    </article>
+                    <article class="legacy-card p-5 border border-white/15 flex flex-col">
+                        <h4 class="font-display font-bold text-lg text-white uppercase tracking-wide mb-2">Zenith Rank</h4>
+                        <p class="text-gray-400 text-sm mb-4 flex-1">Image coming soon.</p>
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/10">
+                            <span class="text-violet-300 font-bold text-lg font-mono">£25.99</span>
+                            <button type="button" class="legacy-btn legacy-btn-primary" onclick="Cart.add('rank_zenith', 'Zenith Rank', 2599, '')"><i class="fa-solid fa-cart-plus mr-1"></i>Add to cart</button>
+                        </div>
+                    </article>
+                    <article class="legacy-card p-5 border border-white/15 flex flex-col">
+                        <h4 class="font-display font-bold text-lg text-white uppercase tracking-wide mb-2">Recruit Rank</h4>
+                        <p class="text-gray-400 text-sm mb-4 flex-1">Image coming soon.</p>
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/10">
+                            <span class="text-violet-300 font-bold text-lg font-mono">£14.99</span>
+                            <button type="button" class="legacy-btn legacy-btn-primary" onclick="Cart.add('rank_recruit', 'Recruit Rank', 1499, '')"><i class="fa-solid fa-cart-plus mr-1"></i>Add to cart</button>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="font-display text-lg uppercase tracking-widest text-violet-300 mb-3">Packs</h3>
+                <p class="text-gray-500 text-sm border border-white/10 rounded-lg p-4">No products in this section right now.</p>
+            </div>
+
+            <div>
+                <h3 class="font-display text-lg uppercase tracking-widest text-violet-300 mb-3">VIP</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <article class="legacy-card p-5 border border-white/15 flex flex-col">
+                        <h4 class="font-display font-bold text-lg text-white uppercase tracking-wide mb-2">VIP Builder</h4>
+                        <p class="text-gray-400 text-sm mb-4 flex-1">Image coming soon.</p>
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/10">
+                            <span class="text-violet-300 font-bold text-lg font-mono">£6.99</span>
+                            <button type="button" class="legacy-btn legacy-btn-primary" onclick="Cart.add('vip_builder', 'VIP Builder', 699, '')"><i class="fa-solid fa-cart-plus mr-1"></i>Add to cart</button>
+                        </div>
+                    </article>
+                    <article class="legacy-card p-5 border border-white/15 flex flex-col">
+                        <h4 class="font-display font-bold text-lg text-white uppercase tracking-wide mb-2">VIP Medical</h4>
+                        <p class="text-gray-400 text-sm mb-4 flex-1">Image coming soon.</p>
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/10">
+                            <span class="text-violet-300 font-bold text-lg font-mono">£4.99</span>
+                            <button type="button" class="legacy-btn legacy-btn-primary" onclick="Cart.add('vip_medical', 'VIP Medical', 499, '')"><i class="fa-solid fa-cart-plus mr-1"></i>Add to cart</button>
+                        </div>
+                    </article>
+                    <article class="legacy-card p-5 border border-white/15 flex flex-col">
+                        <h4 class="font-display font-bold text-lg text-white uppercase tracking-wide mb-2">VIP Turret</h4>
+                        <p class="text-gray-400 text-sm mb-4 flex-1">Image coming soon.</p>
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/10">
+                            <span class="text-violet-300 font-bold text-lg font-mono">£5.99</span>
+                            <button type="button" class="legacy-btn legacy-btn-primary" onclick="Cart.add('vip_turret', 'VIP Turret', 599, '')"><i class="fa-solid fa-cart-plus mr-1"></i>Add to cart</button>
+                        </div>
+                    </article>
+                    <article class="legacy-card p-5 border border-white/15 flex flex-col">
+                        <h4 class="font-display font-bold text-lg text-white uppercase tracking-wide mb-2">VIP Starter</h4>
+                        <p class="text-gray-400 text-sm mb-4 flex-1">Image coming soon.</p>
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/10">
+                            <span class="text-violet-300 font-bold text-lg font-mono">£5.99</span>
+                            <button type="button" class="legacy-btn legacy-btn-primary" onclick="Cart.add('vip_starter', 'VIP Starter', 599, '')"><i class="fa-solid fa-cart-plus mr-1"></i>Add to cart</button>
+                        </div>
+                    </article>
+                    <article class="legacy-card p-5 border border-white/15 flex flex-col">
+                        <h4 class="font-display font-bold text-lg text-white uppercase tracking-wide mb-2">VIP Deluxe</h4>
+                        <p class="text-gray-400 text-sm mb-4 flex-1">Image coming soon.</p>
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/10">
+                            <span class="text-violet-300 font-bold text-lg font-mono">£24.99</span>
+                            <button type="button" class="legacy-btn legacy-btn-primary" onclick="Cart.add('vip_deluxe', 'VIP Deluxe', 2499, '')"><i class="fa-solid fa-cart-plus mr-1"></i>Add to cart</button>
+                        </div>
+                    </article>
+                    <article class="legacy-card p-5 border border-white/15 flex flex-col">
+                        <h4 class="font-display font-bold text-lg text-white uppercase tracking-wide mb-2">VIP - Comps</h4>
+                        <p class="text-gray-400 text-sm mb-4 flex-1">Image coming soon.</p>
+                        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/10">
+                            <span class="text-violet-300 font-bold text-lg font-mono">£6.99</span>
+                            <button type="button" class="legacy-btn legacy-btn-primary" onclick="Cart.add('vip_components', 'VIP - Comps', 699, '')"><i class="fa-solid fa-cart-plus mr-1"></i>Add to cart</button>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="cart-overlay" onclick="Cart.close()" class="fixed inset-0 bg-black/70 hidden z-40"></div>
+    <aside id="cart-drawer" class="fixed top-0 right-0 h-full w-full md:w-[420px] bg-[#101012] border-l border-white/10 z-50 translate-x-full transition-transform duration-200 flex flex-col">
+        <div class="p-5 border-b border-white/10 flex justify-between items-center">
+            <h3 class="legacy-heading text-2xl">Cart</h3>
+            <button onclick="Cart.close()" class="legacy-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+        <div class="px-5 pt-4 pb-2 border-t border-white/10">
+            <label for="cart-promo-input" class="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-1.5 font-mono">Promo code</label>
+            <div class="flex gap-2">
+                <input id="cart-promo-input" type="text" autocomplete="off" spellcheck="false"
+                    class="flex-1 min-w-0 bg-black/50 border border-white/15 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 font-mono focus:outline-none focus:border-[#a855f7]/60"
+                    placeholder="CODE">
+                <button type="button" id="cart-promo-apply" class="legacy-btn text-sm px-3 whitespace-nowrap shrink-0">Apply</button>
+            </div>
+            <p id="cart-promo-feedback" class="text-xs mt-2 font-mono hidden"></p>
+        </div>
+        <div id="cart-store-credit-block" class="px-5 pt-3 border-t border-white/10 space-y-2">
+            <label class="block text-[10px] uppercase tracking-[0.2em] text-gray-500 font-mono">Store credit</label>
+            <p class="text-sm text-gray-300">Balance: <span id="cart-credit-balance" class="text-emerald-400 font-mono">£0.00</span></p>
+            <div class="flex flex-col sm:flex-row gap-2">
+                <input id="cart-credit-apply-input" type="number" step="0.01" min="0" placeholder="0.00" inputmode="decimal"
+                    class="flex-1 min-w-0 bg-black/50 border border-white/15 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-[#a855f7]/60" />
+                <button type="button" id="cart-credit-max-btn" class="legacy-btn text-sm whitespace-nowrap shrink-0">Use max</button>
+            </div>
+            <p id="cart-credit-breakdown" class="text-xs text-gray-500 font-mono leading-relaxed"></p>
+            <p id="cart-credit-warning" class="text-xs text-amber-400 hidden"></p>
+        </div>
+        <div class="p-5 border-t border-white/10">
+            <div class="flex justify-between text-gray-400 text-sm mb-1"><span>Subtotal</span><span id="cart-subtotal">£0.00</span></div>
+            <div id="cart-credit-line" class="flex justify-between text-emerald-400/90 text-sm mb-1 hidden"><span>Store credit</span><span id="cart-credit-applied-display">−£0.00</span></div>
+            <div class="flex justify-between text-gray-300 mb-3 pt-2 border-t border-white/5"><span>Due today</span><strong id="cart-total">£0.00</strong></div>
+            <button id="checkout-btn" onclick="Cart.checkout()" class="legacy-btn legacy-btn-primary w-full">Checkout</button>
+        </div>
+    </aside>
+
+    <script src="/js/addtocart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof Cart !== 'undefined') Cart.updateUI();
+        });
+    </script>
+    <script src="/assets/legacy-footer.js"></script>
+</body>
+</html>
