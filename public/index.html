@@ -55,7 +55,10 @@
                         </p>
                         <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/10">
                             <span class="text-violet-300 font-bold text-lg font-mono">£4.99</span>
-                            <button type="button" class="legacy-btn legacy-btn-primary" onclick="Cart.add('vip', 'VIP', 499, '/assets/Product%20Logos/legacy%20vip%20card.png')"><i class="fa-solid fa-cart-plus mr-1"></i>Add to cart</button>
+                            <div class="flex items-center gap-2">
+                                <button type="button" class="legacy-btn legacy-btn-primary" onclick="Cart.add('vip', 'VIP', 499, '/assets/Product%20Logos/legacy%20vip%20card.png')"><i class="fa-solid fa-cart-plus mr-1"></i>Add to cart</button>
+                                <button type="button" class="legacy-btn" onclick="startSubscription('vip')"><i class="fa-solid fa-repeat mr-1"></i>Subscribe</button>
+                            </div>
                         </div>
                     </article>
 
